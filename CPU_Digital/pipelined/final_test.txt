@@ -1,0 +1,15 @@
+mov r1, 8           //0108
+mov r2, 8           //0208
+add r3, r2, r1      //8321 data hazard
+moveq pc, ab        //0fab not taken 
+sub r4, r1, r2      //9412
+addeq pc, r0, r1    //8f01 ctrl hazard
+mov r3, df          //03df skipped
+and r0, r0, r0      //a000 skipped
+setheq pc, cd       //1fcd not taken
+sub r0, r2, r1      //9012
+setheq r3, bc       //1bbc
+addeq r4, r3, r1    //8c31 data hazard  
+
+r1  r2  r3   r4
+8   8   bc10 bc18

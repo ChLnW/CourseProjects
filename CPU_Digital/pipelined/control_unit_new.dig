@@ -1,0 +1,1023 @@
+<?xml version="1.0" encoding="utf-8"?>
+<circuit>
+  <version>1</version>
+  <attributes>
+    <entry>
+      <string>Width</string>
+      <int>6</int>
+    </entry>
+  </attributes>
+  <visualElements>
+    <visualElement>
+      <elementName>Out</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>RS1</string>
+        </entry>
+        <entry>
+          <string>Bits</string>
+          <int>3</int>
+        </entry>
+      </elementAttributes>
+      <pos x="540" y="240"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Out</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>RS2</string>
+        </entry>
+        <entry>
+          <string>Bits</string>
+          <int>3</int>
+        </entry>
+      </elementAttributes>
+      <pos x="540" y="320"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Out</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WS</string>
+        </entry>
+        <entry>
+          <string>Bits</string>
+          <int>3</int>
+        </entry>
+      </elementAttributes>
+      <pos x="540" y="180"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Out</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WE</string>
+        </entry>
+      </elementAttributes>
+      <pos x="540" y="580"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Splitter</elementName>
+      <elementAttributes>
+        <entry>
+          <string>splitterSpreading</string>
+          <int>3</int>
+        </entry>
+        <entry>
+          <string>Input Splitting</string>
+          <string>16</string>
+        </entry>
+        <entry>
+          <string>Output Splitting</string>
+          <string>10-8,6-4,2-0,15-12,11-11</string>
+        </entry>
+      </elementAttributes>
+      <pos x="-260" y="180"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Text</elementName>
+      <elementAttributes>
+        <entry>
+          <string>textFontSize</string>
+          <int>20</int>
+        </entry>
+        <entry>
+          <string>Description</string>
+          <string>opcode</string>
+        </entry>
+      </elementAttributes>
+      <pos x="-180" y="440"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Text</elementName>
+      <elementAttributes>
+        <entry>
+          <string>textFontSize</string>
+          <int>20</int>
+        </entry>
+        <entry>
+          <string>Description</string>
+          <string>Rd</string>
+        </entry>
+      </elementAttributes>
+      <pos x="-200" y="160"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Text</elementName>
+      <elementAttributes>
+        <entry>
+          <string>textFontSize</string>
+          <int>20</int>
+        </entry>
+        <entry>
+          <string>Description</string>
+          <string>Ra</string>
+        </entry>
+      </elementAttributes>
+      <pos x="-200" y="220"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Text</elementName>
+      <elementAttributes>
+        <entry>
+          <string>textFontSize</string>
+          <int>20</int>
+        </entry>
+        <entry>
+          <string>Description</string>
+          <string>Rb</string>
+        </entry>
+      </elementAttributes>
+      <pos x="-200" y="280"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Splitter</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Input Splitting</string>
+          <string>4</string>
+        </entry>
+        <entry>
+          <string>Output Splitting</string>
+          <string>1,1,1,1</string>
+        </entry>
+      </elementAttributes>
+      <pos x="-180" y="360"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>All Tests</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>	INST                                    WE  ALUOP  RS1   RS2  WS  STR  LDR DMUX
+
+let aluop  = 0b1000;
+let ldrop  = 0b0101;
+let strop  = 0b0100;
+let movlop = 0b0000;
+
+loop(rd, 1&lt;&lt;3)
+loop(ra, 1&lt;&lt;3)
+loop(rb, 1&lt;&lt;3)
+
+loop(i, 4)
+	((aluop+i)&lt;&lt;12 | rd&lt;&lt;8 | ra&lt;&lt;4 | rb&lt;&lt;0) 1  (i)     (ra)  (rb) (rd)  0   X    0  #test add/sub/and/orr
+end loop
+
+	(ldrop    &lt;&lt;12 | rd&lt;&lt;8 | ra&lt;&lt;4 )        1  X       (ra)  x    (rd)  0   1    1  #test ldr
+	(strop    &lt;&lt;12 | rd&lt;&lt;8 | ra&lt;&lt;4 )        0  X       (ra)  (rd)  X    1   X    X  #test str
+	
+	let imm = random(256);
+	(movlop   &lt;&lt;12 | rd&lt;&lt;8 | imm )          1  X       X      X   (rd)  0   X    2  #test movl
+
+end loop
+end loop
+end loop
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="740" y="40"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>ALUOP</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>	INST                                    ALUOP 
+
+let aluop  = 0b1000;
+let ldrop  = 0b0101;
+let strop  = 0b0100;
+let movlop = 0b0000;
+
+loop(rd, 1&lt;&lt;3)
+loop(ra, 1&lt;&lt;3)
+loop(rb, 1&lt;&lt;3)
+
+loop(i, 4)
+	((aluop+i)&lt;&lt;12 | rd&lt;&lt;8 | ra&lt;&lt;4 | rb&lt;&lt;0) (i)    #test add/sub/and/orr
+end loop
+
+end loop
+end loop
+end loop
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="740" y="860"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>RS1</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>	INST                                    RS1  
+
+let aluop  = 0b1000;
+let ldrop  = 0b0101;
+let strop  = 0b0100;
+let movlop = 0b0000;
+
+loop(rd, 1&lt;&lt;3)
+loop(ra, 1&lt;&lt;3)
+loop(rb, 1&lt;&lt;3)
+
+loop(i, 4)
+	((aluop+i)&lt;&lt;12 | rd&lt;&lt;8 | ra&lt;&lt;4 | rb&lt;&lt;0) (ra)  #test add/sub/and/orr
+end loop
+
+	(ldrop    &lt;&lt;12 | rd&lt;&lt;8 | ra&lt;&lt;4 )        (ra)  #test ldr
+	(strop    &lt;&lt;12 | rd&lt;&lt;8 | ra&lt;&lt;4 )        (ra)  #test str
+
+end loop
+end loop
+end loop
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="740" y="240"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>RS2</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>	INST                                    RS2  
+
+let aluop  = 0b1000;
+let ldrop  = 0b0101;
+let strop  = 0b0100;
+let movlop = 0b0000;
+
+loop(rd, 1&lt;&lt;3)
+loop(ra, 1&lt;&lt;3)
+loop(rb, 1&lt;&lt;3)
+
+loop(i, 4)
+	((aluop+i)&lt;&lt;12 | rd&lt;&lt;8 | ra&lt;&lt;4 | rb&lt;&lt;0) (rb) #test add/sub/and/orr
+end loop
+	(strop    &lt;&lt;12 | rd&lt;&lt;8 | ra&lt;&lt;4 )        (rd) #test str
+
+end loop
+end loop
+end loop
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="740" y="320"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>STR</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>	INST                                    STR 
+
+let aluop  = 0b1000;
+let ldrop  = 0b0101;
+let strop  = 0b0100;
+let movlop = 0b0000;
+
+loop(rd, 1&lt;&lt;3)
+loop(ra, 1&lt;&lt;3)
+loop(rb, 1&lt;&lt;3)
+
+loop(i, 4)
+	((aluop+i)&lt;&lt;12 | rd&lt;&lt;8 | ra&lt;&lt;4 | rb&lt;&lt;0) 0  #test add/sub/and/orr
+end loop
+
+	(ldrop    &lt;&lt;12 | rd&lt;&lt;8 | ra&lt;&lt;4 )        0  #test ldr
+	(strop    &lt;&lt;12 | rd&lt;&lt;8 | ra&lt;&lt;4 )        1  #test str
+	
+	let imm = random(256);
+	(movlop   &lt;&lt;12 | rd&lt;&lt;8 | imm )          0  #test movl
+
+end loop
+end loop
+end loop
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="740" y="480"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WE</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>	INST                                    WE  
+
+let aluop  = 0b1000;
+let ldrop  = 0b0101;
+let strop  = 0b0100;
+let movlop = 0b0000;
+
+loop(rd, 1&lt;&lt;3)
+loop(ra, 1&lt;&lt;3)
+loop(rb, 1&lt;&lt;3)
+
+loop(i, 4)
+	((aluop+i)&lt;&lt;12 | rd&lt;&lt;8 | ra&lt;&lt;4 | rb&lt;&lt;0) 1  #test add/sub/and/orr
+end loop
+
+	(ldrop    &lt;&lt;12 | rd&lt;&lt;8 | ra&lt;&lt;4 )        1  #test ldr
+	(strop    &lt;&lt;12 | rd&lt;&lt;8 | ra&lt;&lt;4 )        0  #test str
+	
+	let imm = random(256);
+	(movlop   &lt;&lt;12 | rd&lt;&lt;8 | imm )          1  #test movl
+
+end loop
+end loop
+end loop
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="740" y="580"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>LDR</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>	INST                                    LDR 
+
+let aluop  = 0b1000;
+let ldrop  = 0b0101;
+let strop  = 0b0100;
+let movlop = 0b0000;
+
+loop(rd, 1&lt;&lt;3)
+loop(ra, 1&lt;&lt;3)
+loop(rb, 1&lt;&lt;3)
+
+loop(i, 4)
+	((aluop+i)&lt;&lt;12 | rd&lt;&lt;8 | ra&lt;&lt;4 | rb&lt;&lt;0) X    #test add/sub/and/orr
+end loop
+
+	(ldrop    &lt;&lt;12 | rd&lt;&lt;8 | ra&lt;&lt;4 )        1    #test ldr
+	(strop    &lt;&lt;12 | rd&lt;&lt;8 | ra&lt;&lt;4 )        X    #test str
+	
+	let imm = random(256);
+	(movlop   &lt;&lt;12 | rd&lt;&lt;8 | imm )          X    #test movl
+
+end loop
+end loop
+end loop
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="740" y="680"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>DMUX</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>	INST                                    DMUX
+
+let aluop  = 0b1000;
+let ldrop  = 0b0101;
+let strop  = 0b0100;
+let movlop = 0b0000;
+
+loop(rd, 1&lt;&lt;3)
+loop(ra, 1&lt;&lt;3)
+loop(rb, 1&lt;&lt;3)
+
+loop(i, 4)
+	((aluop+i)&lt;&lt;12 | rd&lt;&lt;8 | ra&lt;&lt;4 | rb&lt;&lt;0) 0  #test add/sub/and/orr
+end loop
+
+	(ldrop    &lt;&lt;12 | rd&lt;&lt;8 | ra&lt;&lt;4 )        1  #test ldr
+	
+	let imm = random(256);
+	(movlop   &lt;&lt;12 | rd&lt;&lt;8 | imm )          2  #test movl
+
+end loop
+end loop
+end loop
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="740" y="760"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Testcase</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>WS</string>
+        </entry>
+        <entry>
+          <string>Testdata</string>
+          <testData>
+            <dataString>	INST                                    WS 
+
+let aluop  = 0b1000;
+let ldrop  = 0b0101;
+let strop  = 0b0100;
+let movlop = 0b0000;
+
+loop(rd, 1&lt;&lt;3)
+loop(ra, 1&lt;&lt;3)
+loop(rb, 1&lt;&lt;3)
+
+loop(i, 4)
+	((aluop+i)&lt;&lt;12 | rd&lt;&lt;8 | ra&lt;&lt;4 | rb&lt;&lt;0) (rd)  #test add/sub/and/orr
+end loop
+
+	(ldrop    &lt;&lt;12 | rd&lt;&lt;8 | ra&lt;&lt;4 )        (rd)   #test ldr
+	(strop    &lt;&lt;12 | rd&lt;&lt;8 | ra&lt;&lt;4 )        X     #test str
+	
+	let imm = random(256);
+	(movlop   &lt;&lt;12 | rd&lt;&lt;8 | imm )          (rd)  #test movl
+
+end loop
+end loop
+end loop
+</dataString>
+          </testData>
+        </entry>
+      </elementAttributes>
+      <pos x="740" y="180"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Splitter</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Input Splitting</string>
+          <string>1,1</string>
+        </entry>
+        <entry>
+          <string>Output Splitting</string>
+          <string>2</string>
+        </entry>
+      </elementAttributes>
+      <pos x="340" y="860"/>
+    </visualElement>
+    <visualElement>
+      <elementName>And</elementName>
+      <elementAttributes>
+        <entry>
+          <string>wideShape</string>
+          <boolean>true</boolean>
+        </entry>
+        <entry>
+          <string>inverterConfig</string>
+          <inverterConfig>
+            <string>In_1</string>
+            <string>In_4</string>
+            <string>In_2</string>
+          </inverterConfig>
+        </entry>
+        <entry>
+          <string>Inputs</string>
+          <int>4</int>
+        </entry>
+      </elementAttributes>
+      <pos x="220" y="440"/>
+    </visualElement>
+    <visualElement>
+      <elementName>And</elementName>
+      <elementAttributes>
+        <entry>
+          <string>wideShape</string>
+          <boolean>true</boolean>
+        </entry>
+        <entry>
+          <string>inverterConfig</string>
+          <inverterConfig>
+            <string>In_4</string>
+            <string>In_2</string>
+          </inverterConfig>
+        </entry>
+        <entry>
+          <string>Inputs</string>
+          <int>4</int>
+        </entry>
+      </elementAttributes>
+      <pos x="220" y="640"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Or</elementName>
+      <elementAttributes>
+        <entry>
+          <string>wideShape</string>
+          <boolean>true</boolean>
+        </entry>
+        <entry>
+          <string>inverterConfig</string>
+          <inverterConfig>
+            <string>In_3</string>
+          </inverterConfig>
+        </entry>
+        <entry>
+          <string>Inputs</string>
+          <int>4</int>
+        </entry>
+      </elementAttributes>
+      <pos x="220" y="540"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Splitter</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Input Splitting</string>
+          <string>1,1</string>
+        </entry>
+        <entry>
+          <string>Output Splitting</string>
+          <string>2</string>
+        </entry>
+      </elementAttributes>
+      <pos x="340" y="760"/>
+    </visualElement>
+    <visualElement>
+      <elementName>XNOr</elementName>
+      <elementAttributes>
+        <entry>
+          <string>wideShape</string>
+          <boolean>true</boolean>
+        </entry>
+      </elementAttributes>
+      <pos x="140" y="780"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Multiplexer</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Bits</string>
+          <int>3</int>
+        </entry>
+      </elementAttributes>
+      <pos x="320" y="300"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Text</elementName>
+      <elementAttributes>
+        <entry>
+          <string>textFontSize</string>
+          <int>20</int>
+        </entry>
+        <entry>
+          <string>Description</string>
+          <string>Cond</string>
+        </entry>
+      </elementAttributes>
+      <pos x="-280" y="460"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Out</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>SETH</string>
+        </entry>
+      </elementAttributes>
+      <pos x="540" y="1040"/>
+    </visualElement>
+    <visualElement>
+      <elementName>And</elementName>
+      <elementAttributes>
+        <entry>
+          <string>wideShape</string>
+          <boolean>true</boolean>
+        </entry>
+        <entry>
+          <string>inverterConfig</string>
+          <inverterConfig>
+            <string>In_4</string>
+            <string>In_2</string>
+            <string>In_3</string>
+          </inverterConfig>
+        </entry>
+        <entry>
+          <string>Inputs</string>
+          <int>4</int>
+        </entry>
+      </elementAttributes>
+      <pos x="240" y="1000"/>
+    </visualElement>
+    <visualElement>
+      <elementName>In</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>INST</string>
+        </entry>
+        <entry>
+          <string>Bits</string>
+          <int>16</int>
+        </entry>
+      </elementAttributes>
+      <pos x="-280" y="180"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Out</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>FLEN</string>
+        </entry>
+      </elementAttributes>
+      <pos x="540" y="960"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Out</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>ALUOP</string>
+        </entry>
+        <entry>
+          <string>Bits</string>
+          <int>2</int>
+        </entry>
+      </elementAttributes>
+      <pos x="540" y="860"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Out</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>DMUX</string>
+        </entry>
+        <entry>
+          <string>Bits</string>
+          <int>2</int>
+        </entry>
+      </elementAttributes>
+      <pos x="540" y="760"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Out</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>STR</string>
+        </entry>
+      </elementAttributes>
+      <pos x="540" y="480"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Out</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>LDR</string>
+        </entry>
+      </elementAttributes>
+      <pos x="540" y="680"/>
+    </visualElement>
+    <visualElement>
+      <elementName>Out</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>COND</string>
+        </entry>
+      </elementAttributes>
+      <pos x="540" y="1140"/>
+    </visualElement>
+  </visualElements>
+  <wires>
+    <wire>
+      <p1 x="0" y="640"/>
+      <p2 x="220" y="640"/>
+    </wire>
+    <wire>
+      <p1 x="360" y="320"/>
+      <p2 x="540" y="320"/>
+    </wire>
+    <wire>
+      <p1 x="-60" y="960"/>
+      <p2 x="540" y="960"/>
+    </wire>
+    <wire>
+      <p1 x="300" y="580"/>
+      <p2 x="540" y="580"/>
+    </wire>
+    <wire>
+      <p1 x="-60" y="520"/>
+      <p2 x="200" y="520"/>
+    </wire>
+    <wire>
+      <p1 x="-20" y="460"/>
+      <p2 x="200" y="460"/>
+    </wire>
+    <wire>
+      <p1 x="300" y="780"/>
+      <p2 x="340" y="780"/>
+    </wire>
+    <wire>
+      <p1 x="-40" y="780"/>
+      <p2 x="140" y="780"/>
+    </wire>
+    <wire>
+      <p1 x="-60" y="720"/>
+      <p2 x="200" y="720"/>
+    </wire>
+    <wire>
+      <p1 x="-160" y="400"/>
+      <p2 x="-40" y="400"/>
+    </wire>
+    <wire>
+      <p1 x="320" y="1040"/>
+      <p2 x="540" y="1040"/>
+    </wire>
+    <wire>
+      <p1 x="-20" y="660"/>
+      <p2 x="200" y="660"/>
+    </wire>
+    <wire>
+      <p1 x="300" y="340"/>
+      <p2 x="320" y="340"/>
+    </wire>
+    <wire>
+      <p1 x="-40" y="600"/>
+      <p2 x="200" y="600"/>
+    </wire>
+    <wire>
+      <p1 x="360" y="860"/>
+      <p2 x="540" y="860"/>
+    </wire>
+    <wire>
+      <p1 x="0" y="860"/>
+      <p2 x="340" y="860"/>
+    </wire>
+    <wire>
+      <p1 x="0" y="540"/>
+      <p2 x="220" y="540"/>
+    </wire>
+    <wire>
+      <p1 x="300" y="480"/>
+      <p2 x="340" y="480"/>
+    </wire>
+    <wire>
+      <p1 x="340" y="480"/>
+      <p2 x="540" y="480"/>
+    </wire>
+    <wire>
+      <p1 x="240" y="800"/>
+      <p2 x="300" y="800"/>
+    </wire>
+    <wire>
+      <p1 x="-160" y="420"/>
+      <p2 x="-60" y="420"/>
+    </wire>
+    <wire>
+      <p1 x="-240" y="420"/>
+      <p2 x="-220" y="420"/>
+    </wire>
+    <wire>
+      <p1 x="-40" y="1060"/>
+      <p2 x="220" y="1060"/>
+    </wire>
+    <wire>
+      <p1 x="300" y="680"/>
+      <p2 x="540" y="680"/>
+    </wire>
+    <wire>
+      <p1 x="-240" y="360"/>
+      <p2 x="-180" y="360"/>
+    </wire>
+    <wire>
+      <p1 x="-160" y="360"/>
+      <p2 x="0" y="360"/>
+    </wire>
+    <wire>
+      <p1 x="0" y="1000"/>
+      <p2 x="240" y="1000"/>
+    </wire>
+    <wire>
+      <p1 x="-60" y="620"/>
+      <p2 x="220" y="620"/>
+    </wire>
+    <wire>
+      <p1 x="-240" y="300"/>
+      <p2 x="320" y="300"/>
+    </wire>
+    <wire>
+      <p1 x="-240" y="240"/>
+      <p2 x="540" y="240"/>
+    </wire>
+    <wire>
+      <p1 x="-20" y="880"/>
+      <p2 x="340" y="880"/>
+    </wire>
+    <wire>
+      <p1 x="-20" y="560"/>
+      <p2 x="220" y="560"/>
+    </wire>
+    <wire>
+      <p1 x="-240" y="180"/>
+      <p2 x="300" y="180"/>
+    </wire>
+    <wire>
+      <p1 x="-280" y="180"/>
+      <p2 x="-260" y="180"/>
+    </wire>
+    <wire>
+      <p1 x="300" y="180"/>
+      <p2 x="540" y="180"/>
+    </wire>
+    <wire>
+      <p1 x="-40" y="500"/>
+      <p2 x="220" y="500"/>
+    </wire>
+    <wire>
+      <p1 x="-60" y="820"/>
+      <p2 x="140" y="820"/>
+    </wire>
+    <wire>
+      <p1 x="-220" y="1140"/>
+      <p2 x="540" y="1140"/>
+    </wire>
+    <wire>
+      <p1 x="360" y="760"/>
+      <p2 x="540" y="760"/>
+    </wire>
+    <wire>
+      <p1 x="-40" y="760"/>
+      <p2 x="340" y="760"/>
+    </wire>
+    <wire>
+      <p1 x="-60" y="1080"/>
+      <p2 x="220" y="1080"/>
+    </wire>
+    <wire>
+      <p1 x="0" y="440"/>
+      <p2 x="200" y="440"/>
+    </wire>
+    <wire>
+      <p1 x="-20" y="1020"/>
+      <p2 x="220" y="1020"/>
+    </wire>
+    <wire>
+      <p1 x="-40" y="700"/>
+      <p2 x="220" y="700"/>
+    </wire>
+    <wire>
+      <p1 x="-160" y="380"/>
+      <p2 x="-20" y="380"/>
+    </wire>
+    <wire>
+      <p1 x="0" y="360"/>
+      <p2 x="0" y="440"/>
+    </wire>
+    <wire>
+      <p1 x="0" y="640"/>
+      <p2 x="0" y="860"/>
+    </wire>
+    <wire>
+      <p1 x="0" y="540"/>
+      <p2 x="0" y="640"/>
+    </wire>
+    <wire>
+      <p1 x="0" y="440"/>
+      <p2 x="0" y="540"/>
+    </wire>
+    <wire>
+      <p1 x="0" y="860"/>
+      <p2 x="0" y="1000"/>
+    </wire>
+    <wire>
+      <p1 x="-20" y="380"/>
+      <p2 x="-20" y="460"/>
+    </wire>
+    <wire>
+      <p1 x="-20" y="880"/>
+      <p2 x="-20" y="1020"/>
+    </wire>
+    <wire>
+      <p1 x="-20" y="460"/>
+      <p2 x="-20" y="560"/>
+    </wire>
+    <wire>
+      <p1 x="-20" y="660"/>
+      <p2 x="-20" y="880"/>
+    </wire>
+    <wire>
+      <p1 x="-20" y="560"/>
+      <p2 x="-20" y="660"/>
+    </wire>
+    <wire>
+      <p1 x="340" y="340"/>
+      <p2 x="340" y="480"/>
+    </wire>
+    <wire>
+      <p1 x="-40" y="400"/>
+      <p2 x="-40" y="500"/>
+    </wire>
+    <wire>
+      <p1 x="-40" y="700"/>
+      <p2 x="-40" y="760"/>
+    </wire>
+    <wire>
+      <p1 x="-40" y="780"/>
+      <p2 x="-40" y="1060"/>
+    </wire>
+    <wire>
+      <p1 x="-40" y="760"/>
+      <p2 x="-40" y="780"/>
+    </wire>
+    <wire>
+      <p1 x="-40" y="500"/>
+      <p2 x="-40" y="600"/>
+    </wire>
+    <wire>
+      <p1 x="-40" y="600"/>
+      <p2 x="-40" y="700"/>
+    </wire>
+    <wire>
+      <p1 x="-60" y="420"/>
+      <p2 x="-60" y="520"/>
+    </wire>
+    <wire>
+      <p1 x="-60" y="960"/>
+      <p2 x="-60" y="1080"/>
+    </wire>
+    <wire>
+      <p1 x="-60" y="820"/>
+      <p2 x="-60" y="960"/>
+    </wire>
+    <wire>
+      <p1 x="-60" y="520"/>
+      <p2 x="-60" y="620"/>
+    </wire>
+    <wire>
+      <p1 x="-60" y="620"/>
+      <p2 x="-60" y="720"/>
+    </wire>
+    <wire>
+      <p1 x="-60" y="720"/>
+      <p2 x="-60" y="820"/>
+    </wire>
+    <wire>
+      <p1 x="-220" y="420"/>
+      <p2 x="-220" y="1140"/>
+    </wire>
+    <wire>
+      <p1 x="300" y="780"/>
+      <p2 x="300" y="800"/>
+    </wire>
+    <wire>
+      <p1 x="300" y="180"/>
+      <p2 x="300" y="340"/>
+    </wire>
+  </wires>
+  <measurementOrdering/>
+</circuit>

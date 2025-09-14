@@ -1,0 +1,3 @@
+fl put in top level as it generally does different things from normal regs, this also prevents FLEN from going into reg file. the output of flag reg goes into register file to fully make use of the multiplexer there (otherwise more multiplexer needed). the layout is relatively neat.
+
+In the case of conditional no execution, anything out of control unit will be 0. which is functionally equivalent to a "nop" getting decoded. One great advantage of this is no extra logic will be added for PC as it cannot tell the dif between canceled addeq and a nop.
