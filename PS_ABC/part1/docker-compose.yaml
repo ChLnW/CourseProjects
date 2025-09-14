@@ -1,0 +1,26 @@
+version: '3'
+services:
+  server:
+    build: ./docker/server_img
+    image: cs523-server-img:latest
+    container_name: cs523-server
+    networks:
+      - cs523
+    volumes:
+    - ./tor:/var/lib/tor
+    - ./:/server
+  client:
+    build: ./docker/client_img
+    image: cs523-client-img:latest
+    container_name: cs523-client
+    networks:
+      - cs523
+    volumes:
+    - ./:/client
+networks:
+  cs523:
+    driver: bridge
+    # Name the network interface for easier packet capture
+    driver_opts:
+      com.docker.network.bridge.name: cs523_bridge
+

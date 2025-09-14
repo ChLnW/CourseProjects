@@ -1,0 +1,2 @@
+## Pointcheval-Sanders Attribute-Based Credentials Scheme
+Implementation of an [ABC](https://privacypatterns.org/patterns/Attribute-based-credentials) scheme based on [PS signatures](https://eprint.iacr.org/2015/525) using [petrelic](https://petrelic.readthedocs.io/en/latest/)
