@@ -1,0 +1,76 @@
+CTKD overwriting key prevention Vol3 PartC 14.1
+
+BR/EDR channel establishment flow chart P1276, P1273
+secure simple pairing P982 Vol2 PartH 7
+
+BLE service flow chart P1343, P1347
+Pairing package structure, Vol3 PartH 3.5
+
+CTKD procedures P1586 Vol3 PartH 2.3.5.7
+
+https://www.bluetooth.com/learn-about-bluetooth/key-attributes/bluetooth-security/blurtooth/
+
+TODO: how to figure out whether dual mode is supported
+Presume all devices have dual mode 
+
+p596 flag ble avail
+overwriting keys,
+CTKD user confirmation (SM 3.6.1)
+
+
+Vol1 partA 5: Overview
+Vol2 PartC 4 LMP pairing, role switch
+
+BR/EDR:
+   legacy (no cryptographic integrity) (PDU sequence Vol2 PartC 4.2, key calc Vol2 PartH 3.2, fun def Vol2 PartH 6)
+   -(FIPS, ECDH for pairing)-> SSP .(PDU sequence Vol2 PartC 4.2.7, key calc & phase diagram Vol2 PartH 7, fun def Vol2 PartH 7.7)
+   -(P-192 -> P-256, FIPS for Authentication & Encryption)-> Secure Connections
+
+BLE:
+   legacy (No ECDH) (Sequence Vol3 PartH Appendix C, fun def 2.2, key calc from 2.3.5.2 )
+   -(FIPS, ECDH for pairing, Numeric Comparison added)-> Secure Connections (key calc 2.3.5.6)
+How to trigger CTKD mentioned in 3.6.1
+
+Action to take when BR Authentication Fails (starting connection) Vol3 PartC 5.2.2.3
+
+1) IO_Cap exchange (BR Vol2 PartC 4.2.7)
+  (cap values p1899 Vol4 PartE 7.1.29 for BR? p1600 Vol3 PartH 3.5.1) (displayOnly, displayYesNo, keyboardOnly, noInputNoOutput, keyboardDisplay)
+  Vol3 PartC 5.2.2.5 p1278 BR IO to IOcap
+  Cap to Pairing method: BR Vol3 PartC 5.2.2.6 p1280, BLE Vol3 PartH 2.3.5.1 p1573
+  SSP: Keyboard + output -> displayYesNo (?) 
+2) Public key exchange
+3) Authentication 1
+4) Authentication 2
+
+LTK calculation DISCREPENCY, presumed Na = Nc on p1586, contradicts with the definition for f5 (p1564) (Actually correct, if Initiator is always Central)
+In BLE, Initiator and Central refer to the same device, so do Responder and Peripheral https://docs.silabs.com/bluetooth/3.1/general/connections/central-and-peripheral-roles
+
+irk tracking:
+   Whether IRK is distributed is indicated in the Pairing Request & Response (SM 3.6.1), 
+   and the actual exchange happens at the Transport specific Key Distribution phase (Phase 3 of Pairing), 
+   i.e. after the key has been negotiated and channel encrypted.
+   It seems from the specification the only user confirmation related to the distribution of IRK is the pairing confirmation. Hence, the problem is essentially whether an Unauthenticated Pairing (Just Works) can be triggered.
+   
+   p1279
+   
+   Interestingly, BREDR pairing requires pairing confirmation wherever possible even for Unauthenticated connections (Vol3 PartC 5.2.2.6), whereas BLE pairing skips user confirmation whenever Just_Works is used, even if such confirmation is possible (for the given IOcap) (Vol3 PartH 2.3.5.6.2 p1581).
+
+BLE transport specific key distribution:
+   BLE pairing has 3 phases (Vol3 PartH 2.1 p1556)
+   • Phase 1: Pairing Feature Exchange
+   • Phase 2: (LE legacy pairing): Short Term Key (STK) Generation
+   • Phase 2: (LE Secure Connections): Long Term Key (LTK) Generation
+   • Phase 3: Transport Specific Key Distribution
+
+   When CTKD is triggreed after BREDR pairing, the flow charts indicate that 
+   both LE key generation and DISTRIBUTION are performed. 
+   Based on SM 3.6.1, it SEEMS that CTKD starts with sending the SMP Pairing Request (SM 3.5.1), 
+   in which the keys to be distributed are indicated in Initiator(/Responder) Key Distribution fields.
+
+Central/Initiator (sends request for keys to be distributed):
+Request/Response Init Key field:  which keys about Central/Initiator to be stored on Peripheral/Responder
+Request/Response Init Key field:  which keys about Central/Initiator to be stored on Peripheral/Responder
+
+IRK Intro: Vol1 PartA 5.4.5
+
+LMP IOCap vol2 partC search "IO_Capabilities" "Authentication_Requirements"

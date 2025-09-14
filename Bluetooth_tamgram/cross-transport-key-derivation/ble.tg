@@ -1,0 +1,647 @@
+fun AES128/2
+// definition of HMAC/CMAC simplified, though should be equivalent for model checking
+fun AES_CMAC(key, m) = AES128(key, m)
+fun last_6digit/1
+fun first_128bit/1
+fun last_128bit/1
+fun tbi() = "TO_BE_INITIALIZED" // placeholder value to initialize a cell
+
+// IO Capabilities exchange
+// Vol3 PartH 2.3.5.1
+fun DisplayOnly() = "DisplayOnly"
+fun DisplayYesNo() = "DisplayYesNo"
+fun KeyboardOnly() = "KeyboardOnly"
+fun NoInputNoOutput() = "NoInputNoOutput"
+fun KeyboardDisplay() = "KeyboardDisplay"
+pred IO_Cap_A/2
+pred IO_Cap_B/2
+
+// 2.3.5.6.1 Public key exchange (Vol3 PartH)
+// ECDH modeled with DH
+builtins := diffie-hellman
+fun DH_Generator() = "DH_Generator"
+fun Gen_ECDH_PK(sk) = DH_Generator()^sk
+fun P256(ska, pkb) = pkb^ska
+
+// Authentication Stage 1 (Vol3 PartH 2.3.5.6)
+// functions defined in Vol3 PartH 2.2
+fun f4(U, V, X, Z) = first_128bit(AES_CMAC(X, <U,V,Z>))
+fun g2(U, V, X, Y) = last_6digit(AES_CMAC(X, <U,V,Y>))
+pred Commitment_Checked/4
+pred Va/2
+pred Vb/2
+fun Just_Works() = "Just_Works"
+fun Numeric_Comparison() = "Numeric_Comparison"
+// fun Passkey_Entry() = "Passkey_Entry"
+fun Passkey_Entry_ADBI() = "Passkey_Entry_ADBI" // A Display B Input
+fun Passkey_Entry_AIBD() = "Passkey_Entry_AIBD" // A Input   B Display
+fun Passkey_Entry_AIBI() = "Passkey_Entry_AIBI" // A Input   B Input
+pred Passkey_Prompt_Init/1
+pred Enter_Passkey_Init/2
+pred Passkey_Prompt_Resp/1
+pred Enter_Passkey_Resp/2
+pred Auth_Stage_1_End/1
+
+// Vol3 PartH 2.3.5.1
+process determine_stage_1_protocol (
+   'iocap_a,
+   'iocap_b,
+   rw 'protocol
+) =
+   choice {
+      { // row 1
+         [ 'iocap_b cas DisplayOnly() ] --> [];
+
+         choice {
+            { // col1
+               [ 'iocap_a cas DisplayOnly() ]
+                  -->
+                  [ 'protocol := Just_Works() ]
+            };
+            { // col2
+               [ 'iocap_a cas DisplayYesNo() ]
+                  -->
+                  [ 'protocol := Just_Works() ]
+            };
+            { // col3
+               [ 'iocap_a cas KeyboardOnly() ]
+                  -->
+                  [ 'protocol := Passkey_Entry_AIBD() ]
+            };
+            { // col4
+               [ 'iocap_a cas NoInputNoOutput() ]
+                  -->
+                  [ 'protocol := Just_Works() ]
+            };
+            { // col5
+               [ 'iocap_a cas KeyboardDisplay() ]
+                  -->
+                  [ 'protocol := Passkey_Entry_AIBD() ]
+            };
+         }
+      };
+      { // row 2
+         [ 'iocap_b cas DisplayYesNo() ] --> [];
+
+         choice {
+            { // col1
+               [ 'iocap_a cas DisplayOnly() ]
+                  -->
+                  [ 'protocol := Just_Works() ]
+            };
+            { // col2
+               [ 'iocap_a cas DisplayYesNo() ]
+                  -->
+                  [ 'protocol := Numeric_Comparison() ]
+            };
+            { // col3
+               [ 'iocap_a cas KeyboardOnly() ]
+                  -->
+                  [ 'protocol := Passkey_Entry_AIBD() ]
+            };
+            { // col4
+               [ 'iocap_a cas NoInputNoOutput() ]
+                  -->
+                  [ 'protocol := Just_Works() ]
+            };
+            { // col5
+               [ 'iocap_a cas KeyboardDisplay() ]
+                  -->
+                  [ 'protocol := Numeric_Comparison() ]
+            };
+         }
+      };
+      { // row 3
+         [ 'iocap_b cas KeyboardOnly() ] --> [];
+
+         choice {
+            { // col1
+               [ 'iocap_a cas DisplayOnly() ]
+                  -->
+                  [ 'protocol := Passkey_Entry_ADBI() ]
+            };
+            { // col2
+               [ 'iocap_a cas DisplayYesNo() ]
+                  -->
+                  [ 'protocol := Passkey_Entry_ADBI() ]
+            };
+            { // col3
+               [ 'iocap_a cas KeyboardOnly() ]
+                  -->
+                  [ 'protocol := Passkey_Entry_ADBI() ]
+            };
+            { // col4
+               [ 'iocap_a cas NoInputNoOutput() ]
+                  -->
+                  [ 'protocol := Just_Works() ]
+            };
+            { // col5
+               [ 'iocap_a cas KeyboardDisplay() ]
+                  -->
+                  [ 'protocol := Passkey_Entry_ADBI() ]
+            };
+         }
+      };
+      { // row 4
+         [ 'iocap_b cas NoInputNoOutput() ] --> [];
+
+         choice {
+            { // col1
+               [ 'iocap_a cas DisplayOnly() ]
+                  -->
+                  [ 'protocol := Just_Works() ]
+            };
+            { // col2
+               [ 'iocap_a cas DisplayYesNo() ]
+                  -->
+                  [ 'protocol := Just_Works() ]
+            };
+            { // col3
+               [ 'iocap_a cas KeyboardOnly() ]
+                  -->
+                  [ 'protocol := Just_Works() ]
+            };
+            { // col4
+               [ 'iocap_a cas NoInputNoOutput() ]
+                  -->
+                  [ 'protocol := Just_Works() ]
+            };
+            { // col5
+               [ 'iocap_a cas KeyboardDisplay() ]
+                  -->
+                  [ 'protocol := Just_Works() ]
+            };
+         }
+      };
+      { // row 5
+         [ 'iocap_b cas KeyboardDisplay() ] --> [];
+
+         choice {
+            { // col1
+               [ 'iocap_a cas DisplayOnly() ]
+                  -->
+                  [ 'protocol := Passkey_Entry_ADBI() ]
+            };
+            { // col2
+               [ 'iocap_a cas DisplayYesNo() ]
+                  -->
+                  [ 'protocol := Numeric_Comparison() ]
+            };
+            { // col3
+               [ 'iocap_a cas KeyboardOnly() ]
+                  -->
+                  [ 'protocol := Passkey_Entry_AIBD() ]
+            };
+            { // col4
+               [ 'iocap_a cas NoInputNoOutput() ]
+                  -->
+                  [ 'protocol := Just_Works() ]
+            };
+            { // col5
+               [ 'iocap_a cas KeyboardDisplay() ]
+                  -->
+                  [ 'protocol := Numeric_Comparison() ]
+            };
+         }
+      };
+   }
+// end of determine_stage_1_protocol()
+
+// Vol3 PartH 2.3.5.6.2
+process numeric_comparison_init (
+   addr_a,
+   'pka,
+   'pkb,
+   rw 'ra,
+   rw 'rb,
+   rw 'Na,
+   rw 'Nb,
+   rw 'Cb,
+   'protocol
+) =
+   // 2a
+   [ Fr(~na) ]
+      -->
+      // 3a
+      [ 'Na := ~na, 'ra := "0", 'rb := "0"];
+   // 4
+   [ In(cb) ]
+      -->
+      // 5
+      [ 'Cb := cb, Out('Na) ];
+   // 6
+   [ In(nb) ]
+      -->
+      [ 'Nb := nb ];
+   // 6a
+   if not ('Cb cas f4('pkb, 'pka, 'Nb, "0")) then { // "only wild card can be used" here if pkb not cell
+      [] --> [ Out("Commitment_check_failed") ]
+   } else {
+      [] --> [ Commitment_Checked('pka, 'pkb, 'Na, 'Nb) ]
+   };
+   // 7a
+   if ('protocol cas Numeric_Comparison()) then {
+      [ Commitment_Checked('pka, 'pkb, 'Na, 'Nb) ]
+         -->
+         [ Va(addr_a, g2('pka, 'pkb, 'Na, 'Nb)) ]
+   } else {
+      // Just Works, user confirmation skipped
+      [ Commitment_Checked('pka, 'pkb, 'Na, 'Nb) ]
+         -->
+         [ Auth_Stage_1_End(addr_a) ]
+   }
+// end of numeric_comparison_init()
+
+// Vol3 PartH 2.3.5.6.2
+process numeric_comparison_resp (
+   addr_b,
+   pka,
+   pkb,
+   rw 'ra,
+   rw 'rb,
+   rw 'Na,
+   rw 'Nb,
+   'protocol
+) =
+   // 2b
+   [ Fr(~nb) ]
+      -->
+      // 3b, 3c, 4
+      [ 'Nb := ~nb, 'ra := "0", 'rb := "0", Out(f4(pkb, pka, ~nb, "0"))];
+      // 5
+   [ In(na) ]
+      -->
+      // 6
+      [ 'Na := na, Out('Nb) ];
+   // 7b
+   if ('protocol cas Numeric_Comparison()) then {
+      [] --> [ Vb(addr_b, g2(pka, pkb, 'Na, 'Nb)) ]
+   } else {
+      // Just Works, user confirmation skipped
+      [] --> [ Auth_Stage_1_End(addr_b) ]
+   }
+// end of numeric_comparison_resp()
+
+/*
+   In the actual implementation, steps 3 to 8 are repeated 20 times, 
+   each time 1 bit of ra/rb is commited, as a measure to make the 
+   protocol computationally secure. It is quite tricky to model such 
+   a loop of 20 iterations, and the implied equation between ra/rb
+   and their constituent bits. And such computational complexity is 
+   not of concern in symbolic model checking, so below the process is 
+   simplified to only one single iteration where the entire ra/rb is 
+   commited.
+*/
+// Vol3 PartH 2.3.5.6.3
+process passkey_entry_init (
+   pka,
+   pkb,
+   addr_a,
+   rw 'ra,
+   rw 'rb,
+   rw 'Na,
+   rw 'Nb,
+   rw 'Cb,
+   'protocol
+) = 
+   // 2a
+   if ('protocol cas Passkey_Entry_ADBI()) then {
+      [ Fr(~passkey) ]
+         -->
+         [ Va(addr_a, ~passkey), 'ra := ~passkey, 'rb := ~passkey ]
+   } else {
+      [] --> [ Passkey_Prompt_Init(addr_a) ];
+      [ Enter_Passkey_Init(addr_a, passkey) ]
+         -->
+         [ 'ra := passkey, 'rb := passkey ]
+   };
+   // 3a
+   [ Fr(~na) ]
+      -->
+      [ 'Na := ~na ];
+   // 4a, 5
+   [] --> [ Out(f4(pka, pkb, 'Na, 'ra)) ];
+   // 6
+   [ In(cb) ]
+      -->
+      // 7
+      [ 'Cb := cb, Out('Na) ];
+   // 8
+   [ In(nb) ]
+      -->
+      [ 'Nb := nb ];
+   // 8a
+   [ 'Cb cas f4(pkb, pka, 'Nb, 'rb) ]
+      -->
+      [ Auth_Stage_1_End(addr_a) ]
+// end of passkey_entry_init()
+
+// Vol3 PartH 2.3.5.6.3
+process passkey_entry_resp (
+   pka,
+   pkb,
+   addr_b,
+   rw 'ra,
+   rw 'rb,
+   rw 'Na,
+   rw 'Nb,
+   rw 'Ca,
+   'protocol
+) = 
+   // 2b
+   if ('protocol cas Passkey_Entry_AIBD()) then {
+      [ Fr(~passkey) ]
+         -->
+         [ Vb(addr_b, ~passkey), 'ra := ~passkey, 'rb := ~passkey ]
+   } else {
+      [] --> [ Passkey_Prompt_Resp(addr_b) ];
+      [ Enter_Passkey_Resp(addr_b, passkey) ]
+         -->
+         [ 'ra := passkey, 'rb := passkey ]
+   };
+   // 3b
+   [ Fr(~nb) ]
+      -->
+      [ 'Nb := ~nb ];
+   // 5
+   [ In(ca) ]
+      -->
+      // 4b, 6
+      [ 'Ca := ca, Out(f4(pkb, pka, 'Nb, 'rb)) ];
+   // 7
+   [ In(na) ]
+      -->
+      [ 'Na := na ];
+   // 7a
+   [ 'Ca cas f4(pka, pkb, 'Na, 'ra) ]
+      -->
+      // 8
+      [ Out('Nb), Auth_Stage_1_End(addr_b) ]
+// end of passkey_entry_resp()
+
+
+// Authentication stage 2 and long term key calculation (Vol3 PartH 2.3.5.6.5)
+// functions defined in Vol3 PartH 2.2
+fun BLE_f5_SALT() = "BLE_f5_SALT"
+fun T_(W) = AES_CMAC(BLE_f5_SALT(), W)
+fun btle() = "btle"
+/* In Vol3 PartH 2.2.7: 
+   "Nc is whichever of N1 and N2 was generated by the Central and sent to the 
+   Peripheral; Np is the other..
+   BD_ADDR_C (Ac) is the device address of the Central and BD_ADDR_P (Ap) 
+   is the device address of the Peripheral."
+   
+   For simplicity, we ASSUME Initiator is Central and Responder is Peripheral
+
+   "The least significant bit in the most significant octet in both BD_ADDR_C 
+   and BD_ADDR_P is set to 1 if the address is a random address and set to 0 
+   if the address is a public address."
+
+   The difference between random address and public address is not modeled
+*/
+fun f5_MacKey(W, Nc, Np, Ac, Ap) = AES_CMAC(T_(W), <"0",btle(),Nc,Np,Ac,Ap,"256">)
+fun    f5_LTK(W, Nc, Np, Ac, Ap) = AES_CMAC(T_(W), <"1",btle(),Nc,Np,Ac,Ap,"256">)
+fun f6(W, N1, N2, R, IOcap, A1, A2) = AES_CMAC(W, <N1,N2,R,IOcap,A1,A2>)
+
+// Cross-transform key derivation (Vol3 PartH 2.3.5.7)
+// functions defined in Vol3 PartH 2.2
+fun h6(W, keyID) = AES_CMAC(first_128bit(W), keyID)
+fun h7(SALT, W) = AES_CMAC(SALT, W)
+/* 
+   h7 may not be supported (indicated by CT2 flag), in that case
+   h6 will be used twice, to derive ltk. but these 2 variants should
+   be equivalent in model checking, so h7 is assumed to be supported.
+*/
+// Vol3 PartH 2.4.2.4
+fun ltk_to_lk(ltk) = h6(h7("tmp1", ltk), "lebr")
+
+// Security properties
+apred LK_Init/3
+apred LK_Resp/3
+
+apred User_Ideal/0
+apred User_Ignorant/0
+
+process User (
+   addr_a,
+   'iocap_a,
+   addr_b,
+   'iocap_b,
+   rw 'Stage1_Protocol
+) = 
+   // Define IO capabilities of both devices
+   [] --> [ IO_Cap_A(addr_a, 'iocap_a), IO_Cap_B(addr_b, 'iocap_b), 'Stage1_Protocol := tbi() ];
+   determine_stage_1_protocol('iocap_a, 'iocap_b, 'Stage1_Protocol);
+   // User operation during Authentication stage 1
+   choice {
+      {
+         [] --[ User_Ideal() ]-> []; // A user familiar with the pairing protocol
+
+         choice {
+            {
+               [ 'Stage1_Protocol cas Numeric_Comparison() ] --> [];
+               
+               [ Va(addr_a, confirm_val), Vb(addr_b, confirm_val) ]
+                  -->
+                  [ Auth_Stage_1_End(addr_a), Auth_Stage_1_End(addr_b) ]
+            };
+            {
+               [ 'Stage1_Protocol cas Just_Works() ] --> []
+            };
+            {
+               [ 'Stage1_Protocol cas Passkey_Entry_AIBI() ] --> [];
+      
+               [ Fr(~passkey), Passkey_Prompt_Init(addr_a), Passkey_Prompt_Resp(addr_b) ]
+                  --> 
+                  [ Enter_Passkey_Init(addr_a, ~passkey),
+                    Enter_Passkey_Resp(addr_b, ~passkey) ]
+            };
+            {
+               [ 'Stage1_Protocol cas Passkey_Entry_AIBD() ] --> [];
+      
+               [ Vb(addr_b, passkey), Passkey_Prompt_Init(addr_a) ]
+                  --> 
+                  [ Enter_Passkey_Init(addr_a, passkey) ]
+            };
+            {
+               [ 'Stage1_Protocol cas Passkey_Entry_ADBI() ] --> [];
+      
+               [ Va(addr_a, passkey), Passkey_Prompt_Resp(addr_b) ]
+                  --> 
+                  [ Enter_Passkey_Resp(addr_b, passkey) ]
+            }
+         }
+      };
+      {
+         [] --[ User_Ignorant() ]-> []; // A user unfamiliar with the pairing protocol
+
+         choice {
+            {               
+               // Numeric Comparison 
+               [ Va(addr_a, confirm_val), Vb(addr_b, confirm_val) ]
+                  -->
+                  [ Auth_Stage_1_End(addr_a), Auth_Stage_1_End(addr_b) ]
+            };
+            {      
+               [ Fr(~passkey), Passkey_Prompt_Init(addr_a), Passkey_Prompt_Resp(addr_b) ]
+                  --> 
+                  [ Enter_Passkey_Init(addr_a, ~passkey),
+                    Enter_Passkey_Resp(addr_b, ~passkey) ]
+            };
+            {      
+               [ Vb(addr_b, passkey), Passkey_Prompt_Init(addr_a) ]
+                  --> 
+                  [ Enter_Passkey_Init(addr_a, passkey) ]
+            };
+            {      
+               [ Va(addr_a, passkey), Passkey_Prompt_Resp(addr_b) ]
+                  --> 
+                  [ Enter_Passkey_Resp(addr_b, passkey) ]
+            }
+         }
+      }
+   }
+
+process Initiator = 
+   // Phase 1: Pairing Feature Exchange
+   [ IO_Cap_A(addr, iocap) ]
+      -->
+      [ 'BTaddrA := addr, 'IOcapA := iocap, Out(<addr, iocap>) ];
+   [ In(<addr, iocap>) ]
+      -->
+      [ 'BTaddrB := addr, 'IOcapB := iocap, 'Stage1_Protocol := tbi() ];
+   determine_stage_1_protocol('IOcapA, 'IOcapB, 'Stage1_Protocol);
+   // End of Pairing Feature Exchange
+
+   // 2.3.5.6 LE Secure Connections pairing phase 2 (Vol3 PartH)
+
+   // 2.3.5.6.1 Public key exchange (Vol3 PartH)
+   [ Fr(~ska) ] 
+      -->
+      // 1a
+      [ 'SKa := ~ska, 'PKa := Gen_ECDH_PK(~ska), Out(Gen_ECDH_PK(~ska)) ];
+   // Receive public key from remote, and compute DHKey
+   [ In(pkb) ] 
+      --> 
+      [ 'PKb := pkb, 'DHKey := P256('SKa, pkb),
+        'ra := tbi(), 'rb := tbi(), 'Na := tbi(), 'Nb := tbi(), 'Cb := tbi() ];
+   // End of Public Key exchange
+
+   // Start of Authentication stage 1 (Vol3 PartH)
+   choice {
+      {
+         [ 'Stage1_Protocol cas Just_Works() ] --> [];
+
+         numeric_comparison_init('BTaddrA, 'PKa, 'PKb, 'ra, 'rb, 'Na, 'Nb, 'Cb, 'Stage1_Protocol)
+      };
+      {
+         [ 'Stage1_Protocol cas Numeric_Comparison() ] --> [];
+
+         numeric_comparison_init('BTaddrA, 'PKa, 'PKb, 'ra, 'rb, 'Na, 'Nb, 'Cb, 'Stage1_Protocol)
+      };
+      {
+         [ 'Stage1_Protocol cas Passkey_Entry_AIBI() ] --> [];
+
+         passkey_entry_init('PKa, 'PKb, 'BTaddrA, 'ra, 'rb, 'Na, 'Nb, 'Cb, 'Stage1_Protocol)
+      };
+      {
+         [ 'Stage1_Protocol cas Passkey_Entry_ADBI() ] --> [];
+
+         passkey_entry_init('PKa, 'PKb, 'BTaddrA, 'ra, 'rb, 'Na, 'Nb, 'Cb, 'Stage1_Protocol)
+      };
+      {
+         [ 'Stage1_Protocol cas Passkey_Entry_AIBD() ] --> [];
+
+         passkey_entry_init('PKa, 'PKb, 'BTaddrA, 'ra, 'rb, 'Na, 'Nb, 'Cb, 'Stage1_Protocol)
+      };
+   };
+   // End of Authentication stage 1
+
+   // Start of Authentication stage 2 and long term key calculation (Vol3 PartH 2.3.5.6.5)
+   [ Auth_Stage_1_End('BTaddrA) ]
+      -->
+      // 9
+      [ 'MacKey := f5_MacKey('DHKey, 'Na, 'Nb, 'BTaddrA, 'BTaddrB),
+        'LTK    :=    f5_LTK('DHKey, 'Na, 'Nb, 'BTaddrA, 'BTaddrB) ];
+   
+   // 10
+   [] --> [ Out(f6('MacKey, 'Na, 'Nb, 'rb, 'IOcapA, 'BTaddrA, 'BTaddrB)) ];
+   
+   // 12a
+   [ In(f6('MacKey, 'Nb, 'Na, 'ra, 'IOcapB, 'BTaddrB, 'BTaddrA)) ]
+      // CTKD 
+      --[ LK_Init('BTaddrA, 'BTaddrB, ltk_to_lk('LTK)) ]-> 
+      [ 'LK := ltk_to_lk('LTK) ]
+   // End Authentication stage 2 and long term key calculation
+
+process Responder = 
+   // Phase 1: Pairing Feature Exchange
+   [ IO_Cap_B(addr, iocap) ]
+      -->
+      // 1b
+      [ 'BTaddrB := addr, 'IOcapB := iocap, Out(<addr, iocap>) ];
+   [ In(<addr, iocap>) ]
+      -->
+      [ 'BTaddrA := addr, 'IOcapA := iocap, 'Stage1_Protocol := tbi() ];
+   determine_stage_1_protocol('IOcapA, 'IOcapB, 'Stage1_Protocol);
+   // End of Pairing Feature Exchange
+
+   // 2.3.5.6.1 Public key exchange (Vol3 PartH)
+   [ Fr(~skb) ] 
+      --> 
+      [ 'SKb := ~skb, 'PKb := Gen_ECDH_PK(~skb) ];
+   // Receive public key from remote, and compute DHKey
+   [ In(pka) ] 
+      --> 
+      // 1b
+      [ 'PKa := pka, 'DHKey := P256('SKb, pka), Out('PKb),
+        'ra := tbi(), 'rb := tbi(), 'Na := tbi(), 'Nb := tbi(), 'Ca := tbi() ];
+   // End of Public Key exchange
+
+   // Start of Authentication stage 1 (Vol3 PartH)
+   choice {
+      {
+         [ 'Stage1_Protocol cas Just_Works() ] --> [];
+
+         numeric_comparison_resp('BTaddrB, 'PKa, 'PKb, 'ra, 'rb, 'Na, 'Nb, 'Stage1_Protocol)
+      };
+      {
+         [ 'Stage1_Protocol cas Numeric_Comparison() ] --> [];
+
+         numeric_comparison_resp('BTaddrB, 'PKa, 'PKb, 'ra, 'rb, 'Na, 'Nb, 'Stage1_Protocol)
+      };
+      {
+         [ 'Stage1_Protocol cas Passkey_Entry_AIBI() ] --> [];
+
+         passkey_entry_resp('PKa, 'PKb, 'BTaddrB, 'ra, 'rb, 'Na, 'Nb, 'Ca, 'Stage1_Protocol)
+      };
+      {
+         [ 'Stage1_Protocol cas Passkey_Entry_ADBI() ] --> [];
+
+         passkey_entry_resp('PKa, 'PKb, 'BTaddrB, 'ra, 'rb, 'Na, 'Nb, 'Ca, 'Stage1_Protocol)
+      };
+      {
+         [ 'Stage1_Protocol cas Passkey_Entry_AIBD() ] --> [];
+
+         passkey_entry_resp('PKa, 'PKb, 'BTaddrB, 'ra, 'rb, 'Na, 'Nb, 'Ca, 'Stage1_Protocol)
+      };
+   };
+   // End of Authentication stage 1
+
+   // Start of Authentication stage 2 and long term key calculation (Vol3 PartH 2.3.5.6.5)
+   [ Auth_Stage_1_End('BTaddrB) ]
+      -->
+      // 9
+      [ 'MacKey := f5_MacKey('DHKey, 'Na, 'Nb, 'BTaddrA, 'BTaddrB),
+        'LTK    :=    f5_LTK('DHKey, 'Na, 'Nb, 'BTaddrA, 'BTaddrB) ];
+   
+   // 11
+   [ In(f6('MacKey, 'Na, 'Nb, 'rb, 'IOcapA, 'BTaddrA, 'BTaddrB)) ]
+      -->
+      // 12
+      [ Out(f6('MacKey, 'Nb, 'Na, 'ra, 'IOcapB, 'BTaddrB, 'BTaddrA)) ];
+   // End Authentication stage 2 and long term key calculation
+
+   // CTKD
+   [] --[ LK_Resp('BTaddrA, 'BTaddrB, ltk_to_lk('LTK)) ]-> 
+      [ 'LK := ltk_to_lk('LTK) ]

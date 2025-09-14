@@ -1,0 +1,680 @@
+fun SHA256/1
+fun AES128/2
+// definition of HMAC/CMAC simplified, though should be equivalent for model checking
+fun HMAC_SHA256(key, m) = SHA256(<key,m>)
+fun AES_CMAC(key, m) = AES128(key, m)
+fun last_6digit/1
+fun first_128bit/1
+fun tbi() = "TO_BE_INITIALIZED" // placeholder value to initialize a cell
+// Only SSP is considered as Legacy does not lead to CTKD
+
+// Vol3 PartC 5.2.2.6
+// IO Capabilities exchange
+// KeyboardDisplay not defined in SSP
+fun DisplayOnly() = "DisplayOnly"
+fun DisplayYesNo() = "DisplayYesNo"
+fun KeyboardOnly() = "KeyboardOnly"
+fun NoInputNoOutput() = "NoInputNoOutput"
+pred IO_Cap_A/2
+pred IO_Cap_B/2
+
+// Phase 1: Public Key exchange (Vol2 PartH 7.1)
+// ECDH modeled with DH
+builtins := diffie-hellman
+fun DH_Generator() = "DH_Generator"
+fun Gen_ECDH_PK(sk) = DH_Generator()^sk
+fun P256(ska, pkb) = pkb^ska
+
+// Phase 2: Authentication Stage 1 (Vol2 PartH 7.2)
+// functions defined in Vol2 PartH 7.7
+fun f1(U, V, X, Z) = first_128bit(HMAC_SHA256(X, <U,V,Z>))
+// Actually should be last_6digit(SHA256(<U,V,X,Y>) mod 2^32) but should be equivalent here
+fun g(U, V, X, Y) = last_6digit(SHA256(<U,V,X,Y>))
+pred Commitment_Checked/4
+pred Va/2
+pred Vb/2
+fun Just_Works() = "Just_Works"
+fun Just_Works_AC() = "Just_Works_AC"
+fun Just_Works_BC() = "Just_Works_BC"
+fun Pairing_Confirm() = "Pairing_Confirm"
+fun Numeric_Comparison() = "Numeric_Comparison"
+fun Passkey_Entry_ADBI() = "Passkey_Entry_ADBI" // A Display B Input
+fun Passkey_Entry_AIBD() = "Passkey_Entry_AIBD" // A Input   B Display
+fun Passkey_Entry_AIBI() = "Passkey_Entry_AIBI" // A Input   B Input
+pred Passkey_Prompt_Init/1
+pred Enter_Passkey_Init/2
+pred Passkey_Prompt_Resp/1
+pred Enter_Passkey_Resp/2
+pred Auth_Stage_1_End/1
+
+// Vol3 PartC 5.2.2.6
+process determine_stage_1_protocol (
+   'iocap_a,
+   'iocap_b,
+   rw 'protocol
+) =
+   choice {
+      { // row 1
+         [ 'iocap_b cas DisplayOnly() ] --> [];
+
+         choice {
+            { // col1
+               [ 'iocap_a cas DisplayOnly() ]
+                  -->
+                  [ 'protocol := Just_Works() ]
+            };
+            { // col2
+               [ 'iocap_a cas DisplayYesNo() ]
+                  -->
+                  [ 'protocol := Just_Works_AC() ]
+            };
+            { // col3
+               [ 'iocap_a cas KeyboardOnly() ]
+                  -->
+                  [ 'protocol := Passkey_Entry_AIBD() ]
+            };
+            { // col4
+               [ 'iocap_a cas NoInputNoOutput() ]
+                  -->
+                  [ 'protocol := Just_Works() ]
+            };
+         }
+      };
+      { // row 2
+         [ 'iocap_b cas DisplayYesNo() ] --> [];
+
+         choice {
+            { // col1
+               [ 'iocap_a cas DisplayOnly() ]
+                  -->
+                  [ 'protocol := Just_Works_BC() ]
+            };
+            { // col2
+               [ 'iocap_a cas DisplayYesNo() ]
+                  -->
+                  [ 'protocol := Numeric_Comparison() ]
+            };
+            { // col3
+               [ 'iocap_a cas KeyboardOnly() ]
+                  -->
+                  [ 'protocol := Passkey_Entry_AIBD() ]
+            };
+            { // col4
+               [ 'iocap_a cas NoInputNoOutput() ]
+                  -->
+                  [ 'protocol := Just_Works_BC() ]
+            };
+         }
+      };
+      { // row 3
+         [ 'iocap_b cas KeyboardOnly() ] --> [];
+
+         choice {
+            { // col1
+               [ 'iocap_a cas DisplayOnly() ]
+                  -->
+                  [ 'protocol := Passkey_Entry_ADBI() ]
+            };
+            { // col2
+               [ 'iocap_a cas DisplayYesNo() ]
+                  -->
+                  [ 'protocol := Passkey_Entry_ADBI() ]
+            };
+            { // col3
+               [ 'iocap_a cas KeyboardOnly() ]
+                  -->
+                  [ 'protocol := Passkey_Entry_AIBI() ]
+            };
+            { // col4
+               [ 'iocap_a cas NoInputNoOutput() ]
+                  -->
+                  [ 'protocol := Just_Works() ]
+            };
+         }
+      };
+      { // row 4
+         [ 'iocap_b cas NoInputNoOutput() ] --> [];
+
+         choice {
+            { // col1
+               [ 'iocap_a cas DisplayOnly() ]
+                  -->
+                  [ 'protocol := Just_Works() ]
+            };
+            { // col2
+               [ 'iocap_a cas DisplayYesNo() ]
+                  -->
+                  [ 'protocol := Just_Works_AC() ]
+            };
+            { // col3
+               [ 'iocap_a cas KeyboardOnly() ]
+                  -->
+                  [ 'protocol := Just_Works() ]
+            };
+            { // col4
+               [ 'iocap_a cas NoInputNoOutput() ]
+                  -->
+                  [ 'protocol := Just_Works() ]
+            };
+         }
+      };
+   }
+// end of determine_stage_1_protocol()
+
+// Vol2 PartH 7.2.1
+process numeric_comparison_init (
+   addr_a,
+   'pka,
+   'pkb,
+   rw 'ra,
+   rw 'rb,
+   rw 'Na,
+   rw 'Nb,
+   rw 'Cb,
+   'protocol
+) =
+   // 2a
+   [ Fr(~na) ]
+      -->
+      // 3a
+      [ 'Na := ~na, 'ra := "0", 'rb := "0"];
+   // 4
+   [ In(cb) ]
+      -->
+      // 5
+      [ 'Cb := cb, Out('Na) ];
+   // 6
+   [ In(nb) ]
+      -->
+      [ 'Nb := nb ];
+   // 6a
+   if ('Cb cas f1('pkb, 'pka, 'Nb, "0")) then { // "only wild card can be used" here if pkb not cell
+      [] --> [ Commitment_Checked('pka, 'pkb, 'Na, 'Nb) ]
+   };
+   // 7a
+   [ Commitment_Checked('pka, 'pkb, 'Na, 'Nb) ] --> [];
+   choice {
+      {
+         [ 'protocol cas Numeric_Comparison() ]
+            -->
+            [ Va(addr_a, g('pka, 'pkb, 'Na, 'Nb)) ]
+      };
+      {
+         [ 'protocol cas Just_Works() ]
+            -->
+            [ Auth_Stage_1_End(addr_a) ]
+      };
+      {
+         [ 'protocol cas Just_Works_AC() ]
+            -->
+            [ Va(addr_a, Pairing_Confirm()) ]
+      };
+      {
+         [ 'protocol cas Just_Works_BC() ]
+            -->
+            [ Auth_Stage_1_End(addr_a) ]
+      }
+   }
+   // Even if JW is used, should ask for confirmation when iocap allows.
+// end of numeric_comparison_init()
+
+// Vol2 PartH 7.2.1
+process numeric_comparison_resp (
+   addr_b,
+   pka,
+   pkb,
+   rw 'ra,
+   rw 'rb,
+   rw 'Na,
+   rw 'Nb,
+   'protocol
+) =
+   // 2b
+   [ Fr(~nb) ]
+      -->
+      // 3b, 3c, 4
+      [ 'Nb := ~nb, 'ra := "0", 'rb := "0", Out(f1(pkb, pka, ~nb, "0"))];
+      // 5
+   [ In(na) ]
+      -->
+      // 6
+      [ 'Na := na, Out('Nb) ];
+   // 7b
+   choice {
+      {
+         [ 'protocol cas Numeric_Comparison() ]
+            -->
+            [ Vb(addr_b, g(pka, pkb, 'Na, 'Nb)) ]
+      };
+      {
+         [ 'protocol cas Just_Works() ]
+            -->
+            [ Auth_Stage_1_End(addr_b) ]
+      };
+      {
+         [ 'protocol cas Just_Works_AC() ]
+            -->
+            [ Auth_Stage_1_End(addr_b) ]
+      };
+      {
+         [ 'protocol cas Just_Works_BC() ]
+            -->
+            [ Vb(addr_b, Pairing_Confirm()) ]
+      }
+   }
+// end of numeric_comparison_resp()
+
+/*
+   In the actual implementation, steps 3 to 8 are repeated 20 times, 
+   each time 1 bit of ra/rb is commited, as a measure to make the 
+   protocol computationally secure. It is quite tricky to model such 
+   a loop of 20 iterations, and the implied equation between ra/rb
+   and their constituent bits. And such computational complexity is 
+   not of concern in symbolic model checking, so below the process is 
+   simplified to only one single iteration where the entire ra/rb is 
+   commited.
+*/
+// Vol2 PartH 7.2.3
+process passkey_entry_init (
+   pka,
+   pkb,
+   addr_a,
+   rw 'ra,
+   rw 'rb,
+   rw 'Na,
+   rw 'Nb,
+   rw 'Cb,
+   'protocol
+) = 
+   // 2a
+   if ('protocol cas Passkey_Entry_ADBI()) then {
+      [ Fr(~passkey) ]
+         -->
+         [ Va(addr_a, ~passkey), 'ra := ~passkey, 'rb := ~passkey ]
+   } else {
+      [] --> [ Passkey_Prompt_Init(addr_a) ];
+      [ Enter_Passkey_Init(addr_a, passkey) ]
+         -->
+         [ 'ra := passkey, 'rb := passkey ]
+   };
+   // 3a
+   [ Fr(~na) ]
+      -->
+      [ 'Na := ~na ];
+   // 4a, 5
+   [] --> [ Out(f1(pka, pkb, 'Na, 'ra)) ];
+   // 6
+   [ In(cb) ]
+      -->
+      // 7
+      [ 'Cb := cb, Out('Na) ];
+   // 8
+   [ In(nb) ]
+      -->
+      [ 'Nb := nb ];
+   // 8a
+   [ 'Cb cas f1(pkb, pka, 'Nb, 'rb) ]
+      -->
+      [ Auth_Stage_1_End(addr_a) ]
+// end of passkey_entry_init()
+
+// Vol2 PartH 7.2.3
+process passkey_entry_resp (
+   pka,
+   pkb,
+   addr_b,
+   rw 'ra,
+   rw 'rb,
+   rw 'Na,
+   rw 'Nb,
+   rw 'Ca,
+   'protocol
+) = 
+   // 2b
+   if ('protocol cas Passkey_Entry_AIBD()) then {
+      [ Fr(~passkey) ]
+         -->
+         [ Vb(addr_b, ~passkey), 'ra := ~passkey, 'rb := ~passkey ]
+   } else {
+      [] --> [ Passkey_Prompt_Resp(addr_b) ];
+      [ Enter_Passkey_Resp(addr_b, passkey) ]
+         -->
+         [ 'ra := passkey, 'rb := passkey ]
+   };
+   // 3b
+   [ Fr(~nb) ]
+      -->
+      [ 'Nb := ~nb ];
+   // 5
+   [ In(ca) ]
+      -->
+      // 4b, 6
+      [ 'Ca := ca, Out(f1(pkb, pka, 'Nb, 'rb)) ];
+   // 7
+   [ In(na) ]
+      -->
+      [ 'Na := na ];
+   // 7a
+   [ 'Ca cas f1(pka, pkb, 'Na, 'ra) ]
+      -->
+      // 8
+      [ Out('Nb), Auth_Stage_1_End(addr_b) ]
+// end of passkey_entry_resp()
+
+
+// Phase 3: Authentication Stage 2 (Vol2 PartH 7.3)
+// functions defined in Vol2 PartH 7.7
+fun f3(W, N1, N2, R, IOcap, A1, A2) = first_128bit(HMAC_SHA256(W, <N1,N2,R,IOcap,A1,A2>))
+pred Auth_Stage_2_End/1
+
+// Phase 4: Link Key calculation (Vol2 PartH 7.4)
+// functions defined in Vol2 PartH 7.7
+/* In Vol2 PartH 7.4: 
+   "Nc is whichever of Na and Nb was generated by the Central and Np 
+   is the other, while BD_ADDR_C (Ac) and BD_ADDR_P (Ap) are the addresses of the 
+   Central and Peripheral respectively"
+   
+   For simplicity, we ASSUME Initiator is Central and Responder is
+   Peripheral
+*/
+fun f2(W, Nc, Np, KeyID, Ac, Ap) = first_128bit(HMAC_SHA256(W, <Nc,Np,KeyID,Ac,Ap>))
+fun btlk() = "btlk"
+
+// Cross-transform key derivation (Vol3 PartH 2.3.5.7)
+// functions defined in Vol3 PartH 2.2
+fun h6(W, keyID) = AES_CMAC(first_128bit(W), keyID)
+fun h7(SALT, W) = AES_CMAC(SALT, W)
+/* 
+   h7 may not be supported (indicated by CT2 flag), in that case
+   h6 will be used twice, to derive ltk. but these 2 variants should
+   be equivalent in model checking, so h7 is assumed to be supported.
+*/
+// Vol3 PartH 2.4.2.5
+fun lk_to_ltk(lk) = h6(h7("tmp2", lk), "brle")
+
+// Security properties
+apred LTK_Init/3
+apred LTK_Resp/3
+
+apred User_Ideal/0
+apred User_Ignorant/0
+
+apred JW_User_Confirm/1
+
+process User (
+   addr_a,
+   'iocap_a,
+   addr_b,
+   'iocap_b,
+   rw 'Stage1_Protocol
+) = 
+   // Define IO capabilities of both devices
+   [] --> [ IO_Cap_A(addr_a, 'iocap_a), IO_Cap_B(addr_b, 'iocap_b), 'Stage1_Protocol := tbi() ];
+   determine_stage_1_protocol('iocap_a, 'iocap_b, 'Stage1_Protocol);
+   // User operation during Authentication stage 1
+   choice {
+      {
+         [] --[ User_Ideal() ]-> []; // A user familiar with the pairing protocol
+
+         choice {
+            {
+               [ 'Stage1_Protocol cas Numeric_Comparison() ] --> [];
+               
+               [ Va(addr_a, confirm_val), Vb(addr_b, confirm_val) ]
+                  -->
+                  [ Auth_Stage_1_End(addr_a), Auth_Stage_1_End(addr_b) ]
+            };
+            {
+               [ 'Stage1_Protocol cas Just_Works() ] --> []
+            };
+            {
+               [ 'Stage1_Protocol cas Just_Works_AC() ] --> [];
+               
+               [ Va(addr_a, Pairing_Confirm()) ]
+                  --[ JW_User_Confirm(addr_a) ]->
+                  [ Auth_Stage_1_End(addr_a) ]
+            };
+            {
+               [ 'Stage1_Protocol cas Just_Works_BC() ] --> [];
+               
+               [ Vb(addr_b, Pairing_Confirm()) ]
+                  --[ JW_User_Confirm(addr_b) ]->
+                  [ Auth_Stage_1_End(addr_b) ]
+            };
+            {
+               [ 'Stage1_Protocol cas Passkey_Entry_AIBI() ] --> [];
+
+               [ Fr(~passkey), Passkey_Prompt_Init(addr_a), Passkey_Prompt_Resp(addr_b) ]
+                  --> 
+                  [ Enter_Passkey_Init(addr_a, ~passkey),
+                    Enter_Passkey_Resp(addr_b, ~passkey) ]
+            };
+            {
+               [ 'Stage1_Protocol cas Passkey_Entry_AIBD() ] --> [];
+
+               [ Vb(addr_b, passkey), Passkey_Prompt_Init(addr_a) ]
+                  --> 
+                  [ Enter_Passkey_Init(addr_a, passkey) ]
+            };
+            {
+               [ 'Stage1_Protocol cas Passkey_Entry_ADBI() ] --> [];
+
+               [ Va(addr_a, passkey), Passkey_Prompt_Resp(addr_b) ]
+                  --> 
+                  [ Enter_Passkey_Resp(addr_b, passkey) ]
+            }
+         }
+      };
+      {
+         [] --[ User_Ignorant() ]-> []; // A user unfamiliar with the pairing protocol
+
+         choice {
+            {               
+               // Numeric Comparison
+               [ Va(addr_a, confirm_val), Vb(addr_b, confirm_val) ]
+                  -->
+                  [ Auth_Stage_1_End(addr_a), Auth_Stage_1_End(addr_b) ]
+            };
+            {
+               // Just Works
+               [] --> []
+            };
+            {               
+               [ Va(addr_a, Pairing_Confirm()) ]
+                  --[ JW_User_Confirm(addr_a) ]->
+                  [ Auth_Stage_1_End(addr_a) ]
+            };
+            {               
+               [ Vb(addr_b, Pairing_Confirm()) ]
+                  --[ JW_User_Confirm(addr_b) ]->
+                  [ Auth_Stage_1_End(addr_b) ]
+            };
+            {
+               // Passkey Entry
+               [ Fr(~passkey), Passkey_Prompt_Init(addr_a), Passkey_Prompt_Resp(addr_b) ]
+                  --> 
+                  [ Enter_Passkey_Init(addr_a, ~passkey),
+                    Enter_Passkey_Resp(addr_b, ~passkey) ]
+            };
+            {
+               [ Vb(addr_b, passkey), Passkey_Prompt_Init(addr_a) ]
+                  --> 
+                  [ Enter_Passkey_Init(addr_a, passkey) ]
+            };
+            {
+               [ Va(addr_a, passkey), Passkey_Prompt_Resp(addr_b) ]
+                  --> 
+                  [ Enter_Passkey_Resp(addr_b, passkey) ]
+            }
+         }
+      }
+   }
+
+process Initiator = 
+   // Start of IO cap exchange
+   [ IO_Cap_A(addr, iocap) ]
+      -->
+      [ 'BTaddrA := addr, 'IOcapA := iocap, Out(<addr, iocap>) ];
+   [ In(<addr, iocap>) ]
+      -->
+      [ 'BTaddrB := addr, 'IOcapB := iocap, 'Stage1_Protocol := tbi() ];
+   determine_stage_1_protocol('IOcapA, 'IOcapB, 'Stage1_Protocol);
+   // End of IO cap exchange
+
+   // Start of Phase 1: Public Key exchange (Vol2 PartH 7.1)
+   // Generate ECDH key pair and send public key
+   [ Fr(~ska) ] 
+      -->
+      // 1a
+      [ 'SKa := ~ska, 'PKa := Gen_ECDH_PK(~ska), Out(Gen_ECDH_PK(~ska)) ];
+   // Receive public key from remote, and compute DHKey
+   [ In(pkb) ] 
+      --> 
+      [ 'PKb := pkb, 'DHKey := P256('SKa, pkb),
+        'ra := tbi(), 'rb := tbi(), 'Na := tbi(), 'Nb := tbi(), 'Cb := tbi() ];
+   // End of Phase 1: Public Key exchange
+   
+   // Start of Phase 2: Authentication stage 1 (Vol2 PartH 7.2)
+   choice {
+      {
+         [ 'Stage1_Protocol cas Just_Works() ] --> [];
+
+         numeric_comparison_init('BTaddrA, 'PKa, 'PKb, 'ra, 'rb, 'Na, 'Nb, 'Cb, 'Stage1_Protocol)
+      };
+      {
+         [ 'Stage1_Protocol cas Numeric_Comparison() ] --> [];
+
+         numeric_comparison_init('BTaddrA, 'PKa, 'PKb, 'ra, 'rb, 'Na, 'Nb, 'Cb, 'Stage1_Protocol)
+      };
+      {
+         [ 'Stage1_Protocol cas Passkey_Entry_AIBI() ] --> [];
+
+         passkey_entry_init('PKa, 'PKb, 'BTaddrA, 'ra, 'rb, 'Na, 'Nb, 'Cb, 'Stage1_Protocol)
+      };
+      {
+         [ 'Stage1_Protocol cas Passkey_Entry_AIBD() ] --> [];
+
+         passkey_entry_init('PKa, 'PKb, 'BTaddrA, 'ra, 'rb, 'Na, 'Nb, 'Cb, 'Stage1_Protocol)
+      };
+      {
+         [ 'Stage1_Protocol cas Passkey_Entry_ADBI() ] --> [];
+
+         passkey_entry_init('PKa, 'PKb, 'BTaddrA, 'ra, 'rb, 'Na, 'Nb, 'Cb, 'Stage1_Protocol)
+      }
+   };
+   // End of Authentication stage 1
+
+   // Start of Phase 3: Authentication stage 2 (Vol2 PartH 7.3)
+   [ Auth_Stage_1_End('BTaddrA) ]
+      -->
+      // 9a, 10
+      [ Out(f3('DHKey, 'Na, 'Nb, 'rb, 'IOcapA, 'BTaddrA, 'BTaddrB))];
+   // 11a
+   [ In(f3('DHKey, 'Nb, 'Na, 'ra, 'IOcapB, 'BTaddrB, 'BTaddrA)) ]
+      -->
+      [ Auth_Stage_2_End('BTaddrA) ];
+   // End of Phase 3: Authentication stage 2
+
+   // Start of Phase 4: Link key calculation
+   [ Auth_Stage_2_End('BTaddrA) ]
+      -->
+      [ 'LK := f2('DHKey, 'Na, 'Nb, btlk(), 'BTaddrA, 'BTaddrB) ];
+   // End of Phase 4: Link key calculation
+
+   // PHASE 5: LMP AUTHENTICATION AND ENCRYPTION (Skipped)
+   
+   /* In the flow chart of Vol3 PartC 5.2.2.1.2:
+      CTKD happens after encryption enabled (i.e. phase 5)
+   */
+   [] --[ LTK_Init('BTaddrA, 'BTaddrB, lk_to_ltk('LK)) ]-> 
+      [ 'LTK := lk_to_ltk('LK) ]
+   
+
+process Responder = 
+   // Start of IO cap exchange
+   [ IO_Cap_B(addr, iocap) ]
+      -->
+      [ 'BTaddrB := addr, 'IOcapB := iocap ];
+   [ In(<addr, iocap>) ]
+      -->
+      [ 'BTaddrA := addr, 'IOcapA := iocap, 'Stage1_Protocol := tbi(), Out(<addr, iocap>) ];
+   determine_stage_1_protocol('IOcapA, 'IOcapB, 'Stage1_Protocol);
+   // End of IO cap exchange
+
+   // Start of Phase 1: Public Key exchange
+   [ Fr(~skb) ] 
+      --> 
+      [ 'SKb := ~skb, 'PKb := Gen_ECDH_PK(~skb) ];
+   // Receive public key from remote, and compute DHKey
+   [ In(pka) ] 
+      --> 
+      // 1b
+      [ 'PKa := pka, 'DHKey := P256('SKb, pka), Out('PKb),
+        'ra := tbi(), 'rb := tbi(), 'Na := tbi(), 'Nb := tbi(), 'Ca := tbi() ];
+   // End of Phase 1: Public Key exchange
+   
+   // Start of Phase 2: Authentication stage 1 (Vol2 PartH 7.2)
+   choice {
+      {
+         [ 'Stage1_Protocol cas Just_Works() ] --> [];
+
+         numeric_comparison_resp('BTaddrB, 'PKa, 'PKb, 'ra, 'rb, 'Na, 'Nb, 'Stage1_Protocol)
+      };
+      {
+         [ 'Stage1_Protocol cas Numeric_Comparison() ] --> [];
+
+         numeric_comparison_resp('BTaddrB, 'PKa, 'PKb, 'ra, 'rb, 'Na, 'Nb, 'Stage1_Protocol)
+      };
+      {
+         [ 'Stage1_Protocol cas Passkey_Entry_AIBI() ] --> [];
+
+         passkey_entry_resp('PKa, 'PKb, 'BTaddrB, 'ra, 'rb, 'Na, 'Nb, 'Ca, 'Stage1_Protocol)
+      };
+      {
+         [ 'Stage1_Protocol cas Passkey_Entry_AIBD() ] --> [];
+
+         passkey_entry_resp('PKa, 'PKb, 'BTaddrB, 'ra, 'rb, 'Na, 'Nb, 'Ca, 'Stage1_Protocol)
+      };
+      {
+         [ 'Stage1_Protocol cas Passkey_Entry_ADBI() ] --> [];
+
+         passkey_entry_resp('PKa, 'PKb, 'BTaddrB, 'ra, 'rb, 'Na, 'Nb, 'Ca, 'Stage1_Protocol)
+      }
+   };
+   // End of Phase 2: Authentication stage 1
+
+   // Start of Phase 3: Authentication stage 2 (Vol2 PartH 7.3)
+   // 10b
+   [ Auth_Stage_1_End('BTaddrB), In(f3('DHKey, 'Na, 'Nb, 'rb, 'IOcapA, 'BTaddrA, 'BTaddrB)) ]
+      -->
+      // 9b, 11
+      [ Auth_Stage_2_End('BTaddrB),
+        Out(f3('DHKey, 'Nb, 'Na, 'ra, 'IOcapB, 'BTaddrB, 'BTaddrA)) ];
+   // End of Phase 3: Authentication stage 2
+
+   // Start of Phase 4: Link key calculation
+   [ Auth_Stage_2_End('BTaddrB) ]
+      -->
+      [ 'LK := f2('DHKey, 'Na, 'Nb, btlk(), 'BTaddrA, 'BTaddrB) ];
+   // End of Phase 4: Link key calculation
+
+   // PHASE 5: LMP AUTHENTICATION AND ENCRYPTION (Skipped)
+   
+   /* In the flow chart of Vol3 PartC 5.2.2.1.2:
+      CTKD happens after encryption enabled (i.e. phase 5)
+   */
+   [] --[ LTK_Resp('BTaddrA, 'BTaddrB, lk_to_ltk('LK)) ]-> 
+      [ 'LTK := lk_to_ltk('LK) ]
+
+process numeric_comparison = 
+   [] --> [ 'addr_a := $A, 'iocap_a := DisplayYesNo(),
+            'addr_b := $B, 'iocap_b := DisplayYesNo(), 'Stage1_Protocol := tbi() ];
+   User('addr_a, 'iocap_a, 'addr_b, 'iocap_b, 'Stage1_Protocol)
+
+lemma Confidentiality =
+   All A B ltk1 ltk2 #i #j.
+      (LTK_Init(A, B, ltk1) @ #i
+      & LTK_Resp(A, B, ltk2) @ #j)
+         ==>
+         (ltk1 = ltk2
+         & not (Ex #z. K(ltk1) @ #z))

@@ -1,0 +1,1379 @@
+theory br
+begin
+
+builtins: diffie-hellman
+
+functions: SHA256_18/1
+
+functions: AES128_19/2
+
+functions: last_6digit_26/1
+
+functions: first_128bit_27/1
+
+rule Initiator_170_0to1:
+  [Fr(~pid)]--[]->[StF(~pid, 'tgk1', 'empty_tuple')]
+
+rule Initiator_170_manyto1to2:
+    [ StF(~pid, 'tgk1', 'empty_tuple')
+    , IO_Cap_A_33(addr_165, iocap_164)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk2', <addr_165, iocap_164>)
+    , Out(<addr_165, iocap_164>)
+    ]
+
+rule Initiator_170_manyto2tomany:
+    [ StF(~pid, 'tgk2', <tgc_BTaddrA_0, tgc_IOcapA_0>)
+    , In(<addr_167, iocap_166>)
+    ]
+  --[ 
+    ]->
+    [ StB(~pid, 'tgk2', <tgc_BTaddrA_0, addr_167, tgc_IOcapA_0, iocap_166>)
+    ]
+
+rule Initiator_170_2to3tomany:
+  [StB(~pid, 'tgk2', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_IOcapA_0, 'DisplayOnly'>)]--[]->[StB(
+~pid, 'tgk3', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_IOcapA_0, 'DisplayOnly'>)]
+
+rule Initiator_170_3to4to23:
+  [StB(~pid, 'tgk3', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'DisplayOnly', tgc_IOcapB_0>)]--[]->[StF(
+~pid, 'tgk23', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'DisplayOnly', tgc_IOcapB_0, 'Just_Works'>)]
+
+rule Initiator_170_3to5to23:
+  [StB(~pid, 'tgk3', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'DisplayYesNo', tgc_IOcapB_0>)]--[]->[StF(
+~pid, 'tgk23', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'DisplayYesNo', tgc_IOcapB_0, 'Just_Works_AC'>)]
+
+rule Initiator_170_3to6to23:
+  [StB(~pid, 'tgk3', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'KeyboardOnly', tgc_IOcapB_0>)]--[]->[StF(
+~pid, 'tgk23', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'KeyboardOnly', tgc_IOcapB_0, 'Passkey_Entry_AIBD'>)]
+
+rule Initiator_170_3to7to23:
+  [StB(~pid, 'tgk3', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'NoInputNoOutput', tgc_IOcapB_0>)]--[]->[StF(
+~pid, 'tgk23', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'NoInputNoOutput', tgc_IOcapB_0, 'Just_Works'>)]
+
+rule Initiator_170_2to8tomany:
+  [StB(~pid, 'tgk2', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_IOcapA_0, 'DisplayYesNo'>)]--[]->[StB(
+~pid, 'tgk8', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_IOcapA_0, 'DisplayYesNo'>)]
+
+rule Initiator_170_8to9to23:
+  [StB(~pid, 'tgk8', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'DisplayOnly', tgc_IOcapB_0>)]--[]->[StF(
+~pid, 'tgk23', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'DisplayOnly', tgc_IOcapB_0, 'Just_Works_BC'>)]
+
+rule Initiator_170_8to10to23:
+  [StB(~pid, 'tgk8', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'DisplayYesNo', tgc_IOcapB_0>)]--[]->[StF(
+~pid, 'tgk23', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'DisplayYesNo', tgc_IOcapB_0, 'Numeric_Comparison'>)]
+
+rule Initiator_170_8to11to23:
+  [StB(~pid, 'tgk8', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'KeyboardOnly', tgc_IOcapB_0>)]--[]->[StF(
+~pid, 'tgk23', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'KeyboardOnly', tgc_IOcapB_0, 'Passkey_Entry_AIBD'>)]
+
+rule Initiator_170_8to12to23:
+  [StB(~pid, 'tgk8', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'NoInputNoOutput', tgc_IOcapB_0>)]--[]->[StF(
+~pid, 'tgk23', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'NoInputNoOutput', tgc_IOcapB_0, 'Just_Works_BC'>)]
+
+rule Initiator_170_2to13tomany:
+  [StB(~pid, 'tgk2', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_IOcapA_0, 'KeyboardOnly'>)]--[]->[StB(
+~pid, 'tgk13', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_IOcapA_0, 'KeyboardOnly'>)]
+
+rule Initiator_170_13to14to23:
+  [StB(~pid, 'tgk13', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'DisplayOnly', tgc_IOcapB_0>)]--[]->[StF(
+~pid, 'tgk23', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'DisplayOnly', tgc_IOcapB_0, 'Passkey_Entry_ADBI'>)]
+
+rule Initiator_170_13to15to23:
+  [StB(~pid, 'tgk13', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'DisplayYesNo', tgc_IOcapB_0>)]--[]->[StF(
+~pid, 'tgk23', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'DisplayYesNo', tgc_IOcapB_0, 'Passkey_Entry_ADBI'>)]
+
+rule Initiator_170_13to16to23:
+  [StB(~pid, 'tgk13', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'KeyboardOnly', tgc_IOcapB_0>)]--[]->[StF(
+~pid, 'tgk23', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'KeyboardOnly', tgc_IOcapB_0, 'Passkey_Entry_AIBI'>)]
+
+rule Initiator_170_13to17to23:
+  [StB(~pid, 'tgk13', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'NoInputNoOutput', tgc_IOcapB_0>)]--[]->[StF(
+~pid, 'tgk23', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'NoInputNoOutput', tgc_IOcapB_0, 'Just_Works'>)]
+
+rule Initiator_170_2to18tomany:
+  [StB(~pid, 'tgk2', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_IOcapA_0, 'NoInputNoOutput'>)]--[]->[StB(
+~pid, 'tgk18', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_IOcapA_0, 'NoInputNoOutput'>)]
+
+rule Initiator_170_18to19to23:
+  [StB(~pid, 'tgk18', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'DisplayOnly', tgc_IOcapB_0>)]--[]->[StF(
+~pid, 'tgk23', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'DisplayOnly', tgc_IOcapB_0, 'Just_Works'>)]
+
+rule Initiator_170_18to20to23:
+  [StB(~pid, 'tgk18', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'DisplayYesNo', tgc_IOcapB_0>)]--[]->[StF(
+~pid, 'tgk23', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'DisplayYesNo', tgc_IOcapB_0, 'Just_Works_AC'>)]
+
+rule Initiator_170_18to21to23:
+  [StB(~pid, 'tgk18', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'KeyboardOnly', tgc_IOcapB_0>)]--[]->[StF(
+~pid, 'tgk23', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'KeyboardOnly', tgc_IOcapB_0, 'Just_Works'>)]
+
+rule Initiator_170_18to22to23:
+  [StB(~pid, 'tgk18', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'NoInputNoOutput', tgc_IOcapB_0>)]--[]->[StF(
+~pid, 'tgk23', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'NoInputNoOutput', tgc_IOcapB_0, 'Just_Works'>)]
+
+rule Initiator_170_manyto23to24:
+    [ StF(~pid, 'tgk23', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Stage1_Protocol_0>)
+    , Fr(~ska_168)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk24', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_IOcapA_0, tgc_IOcapB_0, (('DH_Generator') ^ (~ska_168)), ~ska_168, tgc_Stage1_Protocol_0>)
+    , Out((('DH_Generator') ^ (~ska_168)))
+    ]
+
+rule Initiator_170_manyto24tomany:
+    [ StF(~pid, 'tgk24', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_SKa_0, tgc_Stage1_Protocol_0>)
+    , In(pkb_169)
+    ]
+  --[ 
+    ]->
+    [ StB(~pid, 'tgk24', <tgc_BTaddrA_0, tgc_BTaddrB_0, ((pkb_169) ^ (tgc_SKa_0)), tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, pkb_169, tgc_Stage1_Protocol_0>)
+    ]
+
+rule Initiator_170_24to25to26:
+  [StB(~pid, 'tgk24', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, 'Just_Works'>)]--[]->[StF(
+~pid, 'tgk26', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, 'Just_Works'>)]
+
+rule Initiator_170_manyto26to27:
+    [ StF(~pid, 'tgk26', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0>)
+    , Fr(~na_69)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk27', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, ~na_69, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0, '0', '0'>)
+    ]
+
+rule Initiator_170_manyto27to28:
+    [ StF(~pid, 'tgk27', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0, tgc_ra_0, tgc_rb_0>)
+    , In(cb_70)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk28', <tgc_BTaddrA_0, tgc_BTaddrB_0, cb_70, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0, tgc_ra_0, tgc_rb_0>)
+    , Out(tgc_Na_0)
+    ]
+
+rule Initiator_170_manyto28tomany:
+    [ StF(~pid, 'tgk28', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_Cb_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0, tgc_ra_0, tgc_rb_0>)
+    , In(nb_71)
+    ]
+  --[ 
+    ]->
+    [ StB(~pid, 'tgk28', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_Cb_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, nb_71, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0, tgc_ra_0, tgc_rb_0>)
+    ]
+
+rule Initiator_170_28to29to31:
+  [StB(~pid, 'tgk28', <tgc_BTaddrA_0, tgc_BTaddrB_0, first_128bit_27(SHA256_18(<tgc_Nb_0, <tgc_PKb_0, tgc_PKa_0, '0'>>)), tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0, tgc_ra_0, tgc_rb_0>)]--[]->[StF(
+~pid, 'tgk31', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0, tgc_ra_0, tgc_rb_0>)]
+
+rule Initiator_170_28to30to32:
+  [StB(~pid, 'tgk28', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_Cb_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0, tgc_ra_0, tgc_rb_0>)]--[TgCellNeq(
+tgc_Cb_0, first_128bit_27(SHA256_18(<tgc_Nb_0, <tgc_PKb_0, tgc_PKa_0, '0'>>)))]->[St(
+~pid, 'tgk32', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0, tgc_ra_0, tgc_rb_0>)]
+
+rule Initiator_170_manyto31to33:
+    [ StF(~pid, 'tgk31', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0, tgc_ra_0, tgc_rb_0>)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk33', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0, tgc_ra_0, tgc_rb_0>)
+    , Commitment_Checked_51(tgc_PKa_0, tgc_PKb_0, tgc_Na_0, tgc_Nb_0)
+    ]
+
+rule Initiator_170_manyto33tomany:
+    [ StF(~pid, 'tgk33', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0, tgc_ra_0, tgc_rb_0>)
+    , Commitment_Checked_51(tgc_PKa_0, tgc_PKb_0, tgc_Na_0, tgc_Nb_0)
+    ]
+  --[ 
+    ]->
+    [ StB(~pid, 'tgk33', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0, tgc_ra_0, tgc_rb_0>)
+    ]
+
+rule Initiator_170_32to33tomany:
+    [ St(~pid, 'tgk32', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0, tgc_ra_0, tgc_rb_0>)
+    , Commitment_Checked_51(tgc_PKa_0, tgc_PKb_0, tgc_Na_0, tgc_Nb_0)
+    ]
+  --[ 
+    ]->
+    [ StB(~pid, 'tgk33', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0, tgc_ra_0, tgc_rb_0>)
+    ]
+
+rule Initiator_170_33to34to84:
+    [ StB(~pid, 'tgk33', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_PKa_0, tgc_PKb_0, 'Numeric_Comparison', tgc_ra_0, tgc_rb_0>)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk84', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_ra_0, tgc_rb_0>)
+    , Va_52(tgc_BTaddrA_0, last_6digit_26(SHA256_18(<tgc_PKa_0, tgc_PKb_0, tgc_Na_0, tgc_Nb_0>)))
+    ]
+
+rule Initiator_170_33to35to84:
+    [ StB(~pid, 'tgk33', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_PKa_0, tgc_PKb_0, 'Just_Works', tgc_ra_0, tgc_rb_0>)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk84', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_ra_0, tgc_rb_0>)
+    , Auth_Stage_1_End_66(tgc_BTaddrA_0)
+    ]
+
+rule Initiator_170_33to36to84:
+    [ StB(~pid, 'tgk33', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_PKa_0, tgc_PKb_0, 'Just_Works_AC', tgc_ra_0, tgc_rb_0>)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk84', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_ra_0, tgc_rb_0>)
+    , Va_52(tgc_BTaddrA_0, 'Pairing_Confirm')
+    ]
+
+rule Initiator_170_33to37to84:
+    [ StB(~pid, 'tgk33', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_PKa_0, tgc_PKb_0, 'Just_Works_BC', tgc_ra_0, tgc_rb_0>)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk84', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_ra_0, tgc_rb_0>)
+    , Auth_Stage_1_End_66(tgc_BTaddrA_0)
+    ]
+
+rule Initiator_170_24to38to39:
+  [StB(~pid, 'tgk24', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, 'Numeric_Comparison'>)]--[]->[StF(
+~pid, 'tgk39', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, 'Numeric_Comparison'>)]
+
+rule Initiator_170_manyto39to40:
+    [ StF(~pid, 'tgk39', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0>)
+    , Fr(~na_69)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk40', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, ~na_69, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0, '0', '0'>)
+    ]
+
+rule Initiator_170_manyto40to41:
+    [ StF(~pid, 'tgk40', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0, tgc_ra_0, tgc_rb_0>)
+    , In(cb_70)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk41', <tgc_BTaddrA_0, tgc_BTaddrB_0, cb_70, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0, tgc_ra_0, tgc_rb_0>)
+    , Out(tgc_Na_0)
+    ]
+
+rule Initiator_170_manyto41tomany:
+    [ StF(~pid, 'tgk41', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_Cb_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0, tgc_ra_0, tgc_rb_0>)
+    , In(nb_71)
+    ]
+  --[ 
+    ]->
+    [ StB(~pid, 'tgk41', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_Cb_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, nb_71, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0, tgc_ra_0, tgc_rb_0>)
+    ]
+
+rule Initiator_170_41to42to44:
+  [StB(~pid, 'tgk41', <tgc_BTaddrA_0, tgc_BTaddrB_0, first_128bit_27(SHA256_18(<tgc_Nb_0, <tgc_PKb_0, tgc_PKa_0, '0'>>)), tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0, tgc_ra_0, tgc_rb_0>)]--[]->[StF(
+~pid, 'tgk44', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0, tgc_ra_0, tgc_rb_0>)]
+
+rule Initiator_170_41to43to45:
+  [StB(~pid, 'tgk41', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_Cb_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0, tgc_ra_0, tgc_rb_0>)]--[TgCellNeq(
+tgc_Cb_0, first_128bit_27(SHA256_18(<tgc_Nb_0, <tgc_PKb_0, tgc_PKa_0, '0'>>)))]->[St(
+~pid, 'tgk45', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0, tgc_ra_0, tgc_rb_0>)]
+
+rule Initiator_170_manyto44to46:
+    [ StF(~pid, 'tgk44', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0, tgc_ra_0, tgc_rb_0>)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk46', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0, tgc_ra_0, tgc_rb_0>)
+    , Commitment_Checked_51(tgc_PKa_0, tgc_PKb_0, tgc_Na_0, tgc_Nb_0)
+    ]
+
+rule Initiator_170_manyto46tomany:
+    [ StF(~pid, 'tgk46', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0, tgc_ra_0, tgc_rb_0>)
+    , Commitment_Checked_51(tgc_PKa_0, tgc_PKb_0, tgc_Na_0, tgc_Nb_0)
+    ]
+  --[ 
+    ]->
+    [ StB(~pid, 'tgk46', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0, tgc_ra_0, tgc_rb_0>)
+    ]
+
+rule Initiator_170_45to46tomany:
+    [ St(~pid, 'tgk45', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0, tgc_ra_0, tgc_rb_0>)
+    , Commitment_Checked_51(tgc_PKa_0, tgc_PKb_0, tgc_Na_0, tgc_Nb_0)
+    ]
+  --[ 
+    ]->
+    [ StB(~pid, 'tgk46', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0, tgc_ra_0, tgc_rb_0>)
+    ]
+
+rule Initiator_170_46to47to84:
+    [ StB(~pid, 'tgk46', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_PKa_0, tgc_PKb_0, 'Numeric_Comparison', tgc_ra_0, tgc_rb_0>)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk84', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_ra_0, tgc_rb_0>)
+    , Va_52(tgc_BTaddrA_0, last_6digit_26(SHA256_18(<tgc_PKa_0, tgc_PKb_0, tgc_Na_0, tgc_Nb_0>)))
+    ]
+
+rule Initiator_170_46to48to84:
+    [ StB(~pid, 'tgk46', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_PKa_0, tgc_PKb_0, 'Just_Works', tgc_ra_0, tgc_rb_0>)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk84', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_ra_0, tgc_rb_0>)
+    , Auth_Stage_1_End_66(tgc_BTaddrA_0)
+    ]
+
+rule Initiator_170_46to49to84:
+    [ StB(~pid, 'tgk46', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_PKa_0, tgc_PKb_0, 'Just_Works_AC', tgc_ra_0, tgc_rb_0>)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk84', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_ra_0, tgc_rb_0>)
+    , Va_52(tgc_BTaddrA_0, 'Pairing_Confirm')
+    ]
+
+rule Initiator_170_46to50to84:
+    [ StB(~pid, 'tgk46', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_PKa_0, tgc_PKb_0, 'Just_Works_BC', tgc_ra_0, tgc_rb_0>)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk84', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_ra_0, tgc_rb_0>)
+    , Auth_Stage_1_End_66(tgc_BTaddrA_0)
+    ]
+
+rule Initiator_170_24to51tomany:
+  [StB(~pid, 'tgk24', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, 'Passkey_Entry_AIBI'>)]--[]->[StB(
+~pid, 'tgk51', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, 'Passkey_Entry_AIBI'>)]
+
+rule Initiator_170_51to52to54:
+  [StB(~pid, 'tgk51', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, 'Passkey_Entry_ADBI'>)]--[]->[StF(
+~pid, 'tgk54', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0>)]
+
+rule Initiator_170_51to53to55:
+  [StB(~pid, 'tgk51', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0>)]--[TgCellNeq(
+tgc_Stage1_Protocol_0, 'Passkey_Entry_ADBI')]->[StF(~pid, 'tgk55', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0>)]
+
+rule Initiator_170_manyto54to57:
+    [ StF(~pid, 'tgk54', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0>)
+    , Fr(~passkey_82)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk57', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, ~passkey_82, ~passkey_82>)
+    , Va_52(tgc_BTaddrA_0, ~passkey_82)
+    ]
+
+rule Initiator_170_manyto55to56:
+    [ StF(~pid, 'tgk55', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0>)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk56', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0>)
+    , Passkey_Prompt_Init_62(tgc_BTaddrA_0)
+    ]
+
+rule Initiator_170_manyto56to57:
+    [ StF(~pid, 'tgk56', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0>)
+    , Enter_Passkey_Init_63(addr_a_84, passkey_83)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk57', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, passkey_83, passkey_83>)
+    ]
+
+rule Initiator_170_manyto57to58:
+    [ StF(~pid, 'tgk57', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, tgc_ra_0, tgc_rb_0>)
+    , Fr(~na_85)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk58', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, ~na_85, tgc_PKa_0, tgc_PKb_0, tgc_ra_0, tgc_rb_0>)
+    ]
+
+rule Initiator_170_manyto58to59:
+    [ StF(~pid, 'tgk58', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_PKa_0, tgc_PKb_0, tgc_ra_0, tgc_rb_0>)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk59', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_ra_0, tgc_rb_0>)
+    , Out(first_128bit_27(SHA256_18(<tgc_Na_0, <tgc_PKa_0, tgc_PKb_0, tgc_ra_0>>)))
+    ]
+
+rule Initiator_170_manyto59to60:
+    [ StF(~pid, 'tgk59', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_ra_0, tgc_rb_0>)
+    , In(cb_86)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk60', <tgc_BTaddrA_0, tgc_BTaddrB_0, cb_86, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_ra_0, tgc_rb_0>)
+    , Out(tgc_Na_0)
+    ]
+
+rule Initiator_170_manyto60to61:
+    [ StF(~pid, 'tgk60', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_Cb_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_ra_0, tgc_rb_0>)
+    , In(nb_87)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk61', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_Cb_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, nb_87, tgc_ra_0, tgc_rb_0>)
+    ]
+
+rule Initiator_170_manyto61to84:
+    [ StF(~pid, 'tgk61', <tgc_BTaddrA_0, tgc_BTaddrB_0, first_128bit_27(SHA256_18(<tgc_Nb_0, <pkb_88, pka_89, tgc_rb_0>>)), tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_ra_0, tgc_rb_0>)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk84', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_ra_0, tgc_rb_0>)
+    , Auth_Stage_1_End_66(tgc_BTaddrA_0)
+    ]
+
+rule Initiator_170_24to62tomany:
+  [StB(~pid, 'tgk24', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, 'Passkey_Entry_AIBD'>)]--[]->[StB(
+~pid, 'tgk62', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, 'Passkey_Entry_AIBD'>)]
+
+rule Initiator_170_62to63to65:
+  [StB(~pid, 'tgk62', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, 'Passkey_Entry_ADBI'>)]--[]->[StF(
+~pid, 'tgk65', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0>)]
+
+rule Initiator_170_62to64to66:
+  [StB(~pid, 'tgk62', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0>)]--[TgCellNeq(
+tgc_Stage1_Protocol_0, 'Passkey_Entry_ADBI')]->[StF(~pid, 'tgk66', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0>)]
+
+rule Initiator_170_manyto65to68:
+    [ StF(~pid, 'tgk65', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0>)
+    , Fr(~passkey_82)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk68', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, ~passkey_82, ~passkey_82>)
+    , Va_52(tgc_BTaddrA_0, ~passkey_82)
+    ]
+
+rule Initiator_170_manyto66to67:
+    [ StF(~pid, 'tgk66', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0>)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk67', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0>)
+    , Passkey_Prompt_Init_62(tgc_BTaddrA_0)
+    ]
+
+rule Initiator_170_manyto67to68:
+    [ StF(~pid, 'tgk67', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0>)
+    , Enter_Passkey_Init_63(addr_a_84, passkey_83)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk68', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, passkey_83, passkey_83>)
+    ]
+
+rule Initiator_170_manyto68to69:
+    [ StF(~pid, 'tgk68', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, tgc_ra_0, tgc_rb_0>)
+    , Fr(~na_85)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk69', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, ~na_85, tgc_PKa_0, tgc_PKb_0, tgc_ra_0, tgc_rb_0>)
+    ]
+
+rule Initiator_170_manyto69to70:
+    [ StF(~pid, 'tgk69', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_PKa_0, tgc_PKb_0, tgc_ra_0, tgc_rb_0>)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk70', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_ra_0, tgc_rb_0>)
+    , Out(first_128bit_27(SHA256_18(<tgc_Na_0, <tgc_PKa_0, tgc_PKb_0, tgc_ra_0>>)))
+    ]
+
+rule Initiator_170_manyto70to71:
+    [ StF(~pid, 'tgk70', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_ra_0, tgc_rb_0>)
+    , In(cb_86)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk71', <tgc_BTaddrA_0, tgc_BTaddrB_0, cb_86, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_ra_0, tgc_rb_0>)
+    , Out(tgc_Na_0)
+    ]
+
+rule Initiator_170_manyto71to72:
+    [ StF(~pid, 'tgk71', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_Cb_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_ra_0, tgc_rb_0>)
+    , In(nb_87)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk72', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_Cb_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, nb_87, tgc_ra_0, tgc_rb_0>)
+    ]
+
+rule Initiator_170_manyto72to84:
+    [ StF(~pid, 'tgk72', <tgc_BTaddrA_0, tgc_BTaddrB_0, first_128bit_27(SHA256_18(<tgc_Nb_0, <pkb_88, pka_89, tgc_rb_0>>)), tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_ra_0, tgc_rb_0>)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk84', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_ra_0, tgc_rb_0>)
+    , Auth_Stage_1_End_66(tgc_BTaddrA_0)
+    ]
+
+rule Initiator_170_24to73tomany:
+  [StB(~pid, 'tgk24', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, 'Passkey_Entry_ADBI'>)]--[]->[StB(
+~pid, 'tgk73', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, 'Passkey_Entry_ADBI'>)]
+
+rule Initiator_170_73to74to76:
+  [StB(~pid, 'tgk73', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, 'Passkey_Entry_ADBI'>)]--[]->[StF(
+~pid, 'tgk76', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0>)]
+
+rule Initiator_170_73to75to77:
+  [StB(~pid, 'tgk73', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0>)]--[TgCellNeq(
+tgc_Stage1_Protocol_0, 'Passkey_Entry_ADBI')]->[StF(~pid, 'tgk77', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0>)]
+
+rule Initiator_170_manyto76to79:
+    [ StF(~pid, 'tgk76', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0>)
+    , Fr(~passkey_82)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk79', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, ~passkey_82, ~passkey_82>)
+    , Va_52(tgc_BTaddrA_0, ~passkey_82)
+    ]
+
+rule Initiator_170_manyto77to78:
+    [ StF(~pid, 'tgk77', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0>)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk78', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0>)
+    , Passkey_Prompt_Init_62(tgc_BTaddrA_0)
+    ]
+
+rule Initiator_170_manyto78to79:
+    [ StF(~pid, 'tgk78', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0>)
+    , Enter_Passkey_Init_63(addr_a_84, passkey_83)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk79', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, passkey_83, passkey_83>)
+    ]
+
+rule Initiator_170_manyto79to80:
+    [ StF(~pid, 'tgk79', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, tgc_ra_0, tgc_rb_0>)
+    , Fr(~na_85)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk80', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, ~na_85, tgc_PKa_0, tgc_PKb_0, tgc_ra_0, tgc_rb_0>)
+    ]
+
+rule Initiator_170_manyto80to81:
+    [ StF(~pid, 'tgk80', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_PKa_0, tgc_PKb_0, tgc_ra_0, tgc_rb_0>)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk81', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_ra_0, tgc_rb_0>)
+    , Out(first_128bit_27(SHA256_18(<tgc_Na_0, <tgc_PKa_0, tgc_PKb_0, tgc_ra_0>>)))
+    ]
+
+rule Initiator_170_manyto81to82:
+    [ StF(~pid, 'tgk81', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_ra_0, tgc_rb_0>)
+    , In(cb_86)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk82', <tgc_BTaddrA_0, tgc_BTaddrB_0, cb_86, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_ra_0, tgc_rb_0>)
+    , Out(tgc_Na_0)
+    ]
+
+rule Initiator_170_manyto82to83:
+    [ StF(~pid, 'tgk82', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_Cb_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_ra_0, tgc_rb_0>)
+    , In(nb_87)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk83', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_Cb_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, nb_87, tgc_ra_0, tgc_rb_0>)
+    ]
+
+rule Initiator_170_manyto83to84:
+    [ StF(~pid, 'tgk83', <tgc_BTaddrA_0, tgc_BTaddrB_0, first_128bit_27(SHA256_18(<tgc_Nb_0, <pkb_88, pka_89, tgc_rb_0>>)), tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_ra_0, tgc_rb_0>)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk84', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_ra_0, tgc_rb_0>)
+    , Auth_Stage_1_End_66(tgc_BTaddrA_0)
+    ]
+
+rule Initiator_170_manyto84to85:
+    [ StF(~pid, 'tgk84', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_ra_0, tgc_rb_0>)
+    , Auth_Stage_1_End_66(tgc_BTaddrA_0)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk85', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_ra_0>)
+    , Out(first_128bit_27(SHA256_18(<tgc_DHKey_0, <tgc_Na_0, tgc_Nb_0, tgc_rb_0, tgc_IOcapA_0, tgc_BTaddrA_0, tgc_BTaddrB_0>>)))
+    ]
+
+rule Initiator_170_manyto85to86:
+    [ StF(~pid, 'tgk85', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_ra_0>)
+    , In(first_128bit_27(SHA256_18(<tgc_DHKey_0, <tgc_Nb_0, tgc_Na_0, tgc_ra_0, tgc_IOcapB_0, tgc_BTaddrB_0, tgc_BTaddrA_0>>)))
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk86', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_Na_0, tgc_Nb_0>)
+    , Auth_Stage_2_End_111(tgc_BTaddrA_0)
+    ]
+
+rule Initiator_170_manyto86to87:
+    [ StF(~pid, 'tgk86', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_Na_0, tgc_Nb_0>)
+    , Auth_Stage_2_End_111(tgc_BTaddrA_0)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk87', <tgc_BTaddrA_0, tgc_BTaddrB_0, first_128bit_27(SHA256_18(<tgc_DHKey_0, <tgc_Na_0, tgc_Nb_0, 'btlk', tgc_BTaddrA_0, tgc_BTaddrB_0>>))>)
+    ]
+
+rule Initiator_170_manyto87:
+  [StF(~pid, 'tgk87', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_LK_0>)]--[LTK_Init_128(
+tgc_BTaddrA_0, tgc_BTaddrB_0, AES128_19(first_128bit_27(AES128_19('tmp2', tgc_LK_0)), 'brle'))]->[]
+
+rule Responder_177_88to89:
+  [Fr(~pid)]--[]->[StF(~pid, 'tgk89', 'empty_tuple')]
+
+rule Responder_177_manyto89to90:
+    [ StF(~pid, 'tgk89', 'empty_tuple')
+    , IO_Cap_B_34(addr_172, iocap_171)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk90', <addr_172, iocap_171>)
+    ]
+
+rule Responder_177_manyto90tomany:
+    [ StF(~pid, 'tgk90', <tgc_BTaddrB_0, tgc_IOcapB_0>)
+    , In(<addr_174, iocap_173>)
+    ]
+  --[ 
+    ]->
+    [ StB(~pid, 'tgk90', <addr_174, tgc_BTaddrB_0, iocap_173, tgc_IOcapB_0>)
+    , Out(<addr_174, iocap_173>)
+    ]
+
+rule Responder_177_90to91tomany:
+  [StB(~pid, 'tgk90', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_IOcapA_0, 'DisplayOnly'>)]--[]->[StB(
+~pid, 'tgk91', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_IOcapA_0, 'DisplayOnly'>)]
+
+rule Responder_177_91to92to111:
+  [StB(~pid, 'tgk91', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'DisplayOnly', tgc_IOcapB_0>)]--[]->[StF(
+~pid, 'tgk111', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'DisplayOnly', tgc_IOcapB_0, 'Just_Works'>)]
+
+rule Responder_177_91to93to111:
+  [StB(~pid, 'tgk91', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'DisplayYesNo', tgc_IOcapB_0>)]--[]->[StF(
+~pid, 'tgk111', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'DisplayYesNo', tgc_IOcapB_0, 'Just_Works_AC'>)]
+
+rule Responder_177_91to94to111:
+  [StB(~pid, 'tgk91', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'KeyboardOnly', tgc_IOcapB_0>)]--[]->[StF(
+~pid, 'tgk111', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'KeyboardOnly', tgc_IOcapB_0, 'Passkey_Entry_AIBD'>)]
+
+rule Responder_177_91to95to111:
+  [StB(~pid, 'tgk91', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'NoInputNoOutput', tgc_IOcapB_0>)]--[]->[StF(
+~pid, 'tgk111', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'NoInputNoOutput', tgc_IOcapB_0, 'Just_Works'>)]
+
+rule Responder_177_90to96tomany:
+  [StB(~pid, 'tgk90', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_IOcapA_0, 'DisplayYesNo'>)]--[]->[StB(
+~pid, 'tgk96', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_IOcapA_0, 'DisplayYesNo'>)]
+
+rule Responder_177_96to97to111:
+  [StB(~pid, 'tgk96', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'DisplayOnly', tgc_IOcapB_0>)]--[]->[StF(
+~pid, 'tgk111', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'DisplayOnly', tgc_IOcapB_0, 'Just_Works_BC'>)]
+
+rule Responder_177_96to98to111:
+  [StB(~pid, 'tgk96', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'DisplayYesNo', tgc_IOcapB_0>)]--[]->[StF(
+~pid, 'tgk111', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'DisplayYesNo', tgc_IOcapB_0, 'Numeric_Comparison'>)]
+
+rule Responder_177_96to99to111:
+  [StB(~pid, 'tgk96', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'KeyboardOnly', tgc_IOcapB_0>)]--[]->[StF(
+~pid, 'tgk111', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'KeyboardOnly', tgc_IOcapB_0, 'Passkey_Entry_AIBD'>)]
+
+rule Responder_177_96to100to111:
+  [StB(~pid, 'tgk96', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'NoInputNoOutput', tgc_IOcapB_0>)]--[]->[StF(
+~pid, 'tgk111', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'NoInputNoOutput', tgc_IOcapB_0, 'Just_Works_BC'>)]
+
+rule Responder_177_90to101tomany:
+  [StB(~pid, 'tgk90', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_IOcapA_0, 'KeyboardOnly'>)]--[]->[StB(
+~pid, 'tgk101', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_IOcapA_0, 'KeyboardOnly'>)]
+
+rule Responder_177_101to102to111:
+  [StB(~pid, 'tgk101', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'DisplayOnly', tgc_IOcapB_0>)]--[]->[StF(
+~pid, 'tgk111', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'DisplayOnly', tgc_IOcapB_0, 'Passkey_Entry_ADBI'>)]
+
+rule Responder_177_101to103to111:
+  [StB(~pid, 'tgk101', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'DisplayYesNo', tgc_IOcapB_0>)]--[]->[StF(
+~pid, 'tgk111', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'DisplayYesNo', tgc_IOcapB_0, 'Passkey_Entry_ADBI'>)]
+
+rule Responder_177_101to104to111:
+  [StB(~pid, 'tgk101', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'KeyboardOnly', tgc_IOcapB_0>)]--[]->[StF(
+~pid, 'tgk111', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'KeyboardOnly', tgc_IOcapB_0, 'Passkey_Entry_AIBI'>)]
+
+rule Responder_177_101to105to111:
+  [StB(~pid, 'tgk101', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'NoInputNoOutput', tgc_IOcapB_0>)]--[]->[StF(
+~pid, 'tgk111', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'NoInputNoOutput', tgc_IOcapB_0, 'Just_Works'>)]
+
+rule Responder_177_90to106tomany:
+  [StB(~pid, 'tgk90', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_IOcapA_0, 'NoInputNoOutput'>)]--[]->[StB(
+~pid, 'tgk106', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_IOcapA_0, 'NoInputNoOutput'>)]
+
+rule Responder_177_106to107to111:
+  [StB(~pid, 'tgk106', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'DisplayOnly', tgc_IOcapB_0>)]--[]->[StF(
+~pid, 'tgk111', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'DisplayOnly', tgc_IOcapB_0, 'Just_Works'>)]
+
+rule Responder_177_106to108to111:
+  [StB(~pid, 'tgk106', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'DisplayYesNo', tgc_IOcapB_0>)]--[]->[StF(
+~pid, 'tgk111', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'DisplayYesNo', tgc_IOcapB_0, 'Just_Works_AC'>)]
+
+rule Responder_177_106to109to111:
+  [StB(~pid, 'tgk106', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'KeyboardOnly', tgc_IOcapB_0>)]--[]->[StF(
+~pid, 'tgk111', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'KeyboardOnly', tgc_IOcapB_0, 'Just_Works'>)]
+
+rule Responder_177_106to110to111:
+  [StB(~pid, 'tgk106', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'NoInputNoOutput', tgc_IOcapB_0>)]--[]->[StF(
+~pid, 'tgk111', <tgc_BTaddrA_0, tgc_BTaddrB_0, 'NoInputNoOutput', tgc_IOcapB_0, 'Just_Works'>)]
+
+rule Responder_177_manyto111to112:
+    [ StF(~pid, 'tgk111', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Stage1_Protocol_0>)
+    , Fr(~skb_175)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk112', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_IOcapA_0, tgc_IOcapB_0, (('DH_Generator') ^ (~skb_175)), ~skb_175, tgc_Stage1_Protocol_0>)
+    ]
+
+rule Responder_177_manyto112tomany:
+    [ StF(~pid, 'tgk112', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKb_0, tgc_SKb_0, tgc_Stage1_Protocol_0>)
+    , In(pka_176)
+    ]
+  --[ 
+    ]->
+    [ StB(~pid, 'tgk112', <tgc_BTaddrA_0, tgc_BTaddrB_0, ((pka_176) ^ (tgc_SKb_0)), tgc_IOcapA_0, tgc_IOcapB_0, pka_176, tgc_PKb_0, tgc_Stage1_Protocol_0>)
+    , Out(tgc_PKb_0)
+    ]
+
+rule Responder_177_112to113to114:
+  [StB(~pid, 'tgk112', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, 'Just_Works'>)]--[]->[StF(
+~pid, 'tgk114', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, 'Just_Works'>)]
+
+rule Responder_177_manyto114to115:
+    [ StF(~pid, 'tgk114', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0>)
+    , Fr(~nb_76)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk115', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, ~nb_76, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0, '0', '0'>)
+    , Out(first_128bit_27(SHA256_18(<~nb_76, <tgc_PKb_0, tgc_PKa_0, '0'>>)))
+    ]
+
+rule Responder_177_manyto115tomany:
+    [ StF(~pid, 'tgk115', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Nb_0, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0, tgc_ra_0, tgc_rb_0>)
+    , In(na_77)
+    ]
+  --[ 
+    ]->
+    [ StB(~pid, 'tgk115', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, na_77, tgc_Nb_0, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0, tgc_ra_0, tgc_rb_0>)
+    , Out(tgc_Nb_0)
+    ]
+
+rule Responder_177_115to116to157:
+    [ StB(~pid, 'tgk115', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_PKa_0, tgc_PKb_0, 'Numeric_Comparison', tgc_ra_0, tgc_rb_0>)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk157', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_ra_0, tgc_rb_0>)
+    , Vb_53(tgc_BTaddrB_0, last_6digit_26(SHA256_18(<tgc_PKa_0, tgc_PKb_0, tgc_Na_0, tgc_Nb_0>)))
+    ]
+
+rule Responder_177_115to117to157:
+    [ StB(~pid, 'tgk115', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_PKa_0, tgc_PKb_0, 'Just_Works', tgc_ra_0, tgc_rb_0>)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk157', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_ra_0, tgc_rb_0>)
+    , Auth_Stage_1_End_66(tgc_BTaddrB_0)
+    ]
+
+rule Responder_177_115to118to157:
+    [ StB(~pid, 'tgk115', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_PKa_0, tgc_PKb_0, 'Just_Works_AC', tgc_ra_0, tgc_rb_0>)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk157', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_ra_0, tgc_rb_0>)
+    , Auth_Stage_1_End_66(tgc_BTaddrB_0)
+    ]
+
+rule Responder_177_115to119to157:
+    [ StB(~pid, 'tgk115', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_PKa_0, tgc_PKb_0, 'Just_Works_BC', tgc_ra_0, tgc_rb_0>)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk157', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_ra_0, tgc_rb_0>)
+    , Vb_53(tgc_BTaddrB_0, 'Pairing_Confirm')
+    ]
+
+rule Responder_177_112to120to121:
+  [StB(~pid, 'tgk112', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, 'Numeric_Comparison'>)]--[]->[StF(
+~pid, 'tgk121', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, 'Numeric_Comparison'>)]
+
+rule Responder_177_manyto121to122:
+    [ StF(~pid, 'tgk121', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0>)
+    , Fr(~nb_76)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk122', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, ~nb_76, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0, '0', '0'>)
+    , Out(first_128bit_27(SHA256_18(<~nb_76, <tgc_PKb_0, tgc_PKa_0, '0'>>)))
+    ]
+
+rule Responder_177_manyto122tomany:
+    [ StF(~pid, 'tgk122', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Nb_0, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0, tgc_ra_0, tgc_rb_0>)
+    , In(na_77)
+    ]
+  --[ 
+    ]->
+    [ StB(~pid, 'tgk122', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, na_77, tgc_Nb_0, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0, tgc_ra_0, tgc_rb_0>)
+    , Out(tgc_Nb_0)
+    ]
+
+rule Responder_177_122to123to157:
+    [ StB(~pid, 'tgk122', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_PKa_0, tgc_PKb_0, 'Numeric_Comparison', tgc_ra_0, tgc_rb_0>)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk157', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_ra_0, tgc_rb_0>)
+    , Vb_53(tgc_BTaddrB_0, last_6digit_26(SHA256_18(<tgc_PKa_0, tgc_PKb_0, tgc_Na_0, tgc_Nb_0>)))
+    ]
+
+rule Responder_177_122to124to157:
+    [ StB(~pid, 'tgk122', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_PKa_0, tgc_PKb_0, 'Just_Works', tgc_ra_0, tgc_rb_0>)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk157', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_ra_0, tgc_rb_0>)
+    , Auth_Stage_1_End_66(tgc_BTaddrB_0)
+    ]
+
+rule Responder_177_122to125to157:
+    [ StB(~pid, 'tgk122', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_PKa_0, tgc_PKb_0, 'Just_Works_AC', tgc_ra_0, tgc_rb_0>)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk157', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_ra_0, tgc_rb_0>)
+    , Auth_Stage_1_End_66(tgc_BTaddrB_0)
+    ]
+
+rule Responder_177_122to126to157:
+    [ StB(~pid, 'tgk122', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_PKa_0, tgc_PKb_0, 'Just_Works_BC', tgc_ra_0, tgc_rb_0>)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk157', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_ra_0, tgc_rb_0>)
+    , Vb_53(tgc_BTaddrB_0, 'Pairing_Confirm')
+    ]
+
+rule Responder_177_112to127tomany:
+  [StB(~pid, 'tgk112', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, 'Passkey_Entry_AIBI'>)]--[]->[StB(
+~pid, 'tgk127', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, 'Passkey_Entry_AIBI'>)]
+
+rule Responder_177_127to128to130:
+  [StB(~pid, 'tgk127', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, 'Passkey_Entry_AIBD'>)]--[]->[StF(
+~pid, 'tgk130', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0>)]
+
+rule Responder_177_127to129to131:
+  [StB(~pid, 'tgk127', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0>)]--[TgCellNeq(
+tgc_Stage1_Protocol_0, 'Passkey_Entry_AIBD')]->[StF(~pid, 'tgk131', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0>)]
+
+rule Responder_177_manyto130to133:
+    [ StF(~pid, 'tgk130', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0>)
+    , Fr(~passkey_94)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk133', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, ~passkey_94, ~passkey_94>)
+    , Vb_53(tgc_BTaddrB_0, ~passkey_94)
+    ]
+
+rule Responder_177_manyto131to132:
+    [ StF(~pid, 'tgk131', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0>)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk132', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0>)
+    , Passkey_Prompt_Resp_64(tgc_BTaddrB_0)
+    ]
+
+rule Responder_177_manyto132to133:
+    [ StF(~pid, 'tgk132', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0>)
+    , Enter_Passkey_Resp_65(addr_b_96, passkey_95)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk133', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, passkey_95, passkey_95>)
+    ]
+
+rule Responder_177_manyto133to134:
+    [ StF(~pid, 'tgk133', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, tgc_ra_0, tgc_rb_0>)
+    , Fr(~nb_97)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk134', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, ~nb_97, tgc_PKa_0, tgc_PKb_0, tgc_ra_0, tgc_rb_0>)
+    ]
+
+rule Responder_177_manyto134to135:
+    [ StF(~pid, 'tgk134', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Nb_0, tgc_PKa_0, tgc_PKb_0, tgc_ra_0, tgc_rb_0>)
+    , In(ca_98)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk135', <tgc_BTaddrA_0, tgc_BTaddrB_0, ca_98, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Nb_0, tgc_ra_0, tgc_rb_0>)
+    , Out(first_128bit_27(SHA256_18(<tgc_Nb_0, <tgc_PKb_0, tgc_PKa_0, tgc_rb_0>>)))
+    ]
+
+rule Responder_177_manyto135to136:
+    [ StF(~pid, 'tgk135', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_Ca_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Nb_0, tgc_ra_0, tgc_rb_0>)
+    , In(na_99)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk136', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_Ca_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, na_99, tgc_Nb_0, tgc_ra_0, tgc_rb_0>)
+    ]
+
+rule Responder_177_manyto136to157:
+    [ StF(~pid, 'tgk136', <tgc_BTaddrA_0, tgc_BTaddrB_0, first_128bit_27(SHA256_18(<tgc_Na_0, <pka_101, pkb_100, tgc_ra_0>>)), tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_ra_0, tgc_rb_0>)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk157', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_ra_0, tgc_rb_0>)
+    , Out(tgc_Nb_0)
+    , Auth_Stage_1_End_66(tgc_BTaddrB_0)
+    ]
+
+rule Responder_177_112to137tomany:
+  [StB(~pid, 'tgk112', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, 'Passkey_Entry_AIBD'>)]--[]->[StB(
+~pid, 'tgk137', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, 'Passkey_Entry_AIBD'>)]
+
+rule Responder_177_137to138to140:
+  [StB(~pid, 'tgk137', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, 'Passkey_Entry_AIBD'>)]--[]->[StF(
+~pid, 'tgk140', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0>)]
+
+rule Responder_177_137to139to141:
+  [StB(~pid, 'tgk137', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0>)]--[TgCellNeq(
+tgc_Stage1_Protocol_0, 'Passkey_Entry_AIBD')]->[StF(~pid, 'tgk141', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0>)]
+
+rule Responder_177_manyto140to143:
+    [ StF(~pid, 'tgk140', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0>)
+    , Fr(~passkey_94)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk143', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, ~passkey_94, ~passkey_94>)
+    , Vb_53(tgc_BTaddrB_0, ~passkey_94)
+    ]
+
+rule Responder_177_manyto141to142:
+    [ StF(~pid, 'tgk141', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0>)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk142', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0>)
+    , Passkey_Prompt_Resp_64(tgc_BTaddrB_0)
+    ]
+
+rule Responder_177_manyto142to143:
+    [ StF(~pid, 'tgk142', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0>)
+    , Enter_Passkey_Resp_65(addr_b_96, passkey_95)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk143', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, passkey_95, passkey_95>)
+    ]
+
+rule Responder_177_manyto143to144:
+    [ StF(~pid, 'tgk143', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, tgc_ra_0, tgc_rb_0>)
+    , Fr(~nb_97)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk144', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, ~nb_97, tgc_PKa_0, tgc_PKb_0, tgc_ra_0, tgc_rb_0>)
+    ]
+
+rule Responder_177_manyto144to145:
+    [ StF(~pid, 'tgk144', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Nb_0, tgc_PKa_0, tgc_PKb_0, tgc_ra_0, tgc_rb_0>)
+    , In(ca_98)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk145', <tgc_BTaddrA_0, tgc_BTaddrB_0, ca_98, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Nb_0, tgc_ra_0, tgc_rb_0>)
+    , Out(first_128bit_27(SHA256_18(<tgc_Nb_0, <tgc_PKb_0, tgc_PKa_0, tgc_rb_0>>)))
+    ]
+
+rule Responder_177_manyto145to146:
+    [ StF(~pid, 'tgk145', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_Ca_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Nb_0, tgc_ra_0, tgc_rb_0>)
+    , In(na_99)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk146', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_Ca_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, na_99, tgc_Nb_0, tgc_ra_0, tgc_rb_0>)
+    ]
+
+rule Responder_177_manyto146to157:
+    [ StF(~pid, 'tgk146', <tgc_BTaddrA_0, tgc_BTaddrB_0, first_128bit_27(SHA256_18(<tgc_Na_0, <pka_101, pkb_100, tgc_ra_0>>)), tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_ra_0, tgc_rb_0>)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk157', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_ra_0, tgc_rb_0>)
+    , Out(tgc_Nb_0)
+    , Auth_Stage_1_End_66(tgc_BTaddrB_0)
+    ]
+
+rule Responder_177_112to147tomany:
+  [StB(~pid, 'tgk112', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, 'Passkey_Entry_ADBI'>)]--[]->[StB(
+~pid, 'tgk147', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, 'Passkey_Entry_ADBI'>)]
+
+rule Responder_177_147to148to150:
+  [StB(~pid, 'tgk147', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, 'Passkey_Entry_AIBD'>)]--[]->[StF(
+~pid, 'tgk150', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0>)]
+
+rule Responder_177_147to149to151:
+  [StB(~pid, 'tgk147', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, tgc_Stage1_Protocol_0>)]--[TgCellNeq(
+tgc_Stage1_Protocol_0, 'Passkey_Entry_AIBD')]->[StF(~pid, 'tgk151', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0>)]
+
+rule Responder_177_manyto150to153:
+    [ StF(~pid, 'tgk150', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0>)
+    , Fr(~passkey_94)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk153', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, ~passkey_94, ~passkey_94>)
+    , Vb_53(tgc_BTaddrB_0, ~passkey_94)
+    ]
+
+rule Responder_177_manyto151to152:
+    [ StF(~pid, 'tgk151', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0>)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk152', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0>)
+    , Passkey_Prompt_Resp_64(tgc_BTaddrB_0)
+    ]
+
+rule Responder_177_manyto152to153:
+    [ StF(~pid, 'tgk152', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0>)
+    , Enter_Passkey_Resp_65(addr_b_96, passkey_95)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk153', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, passkey_95, passkey_95>)
+    ]
+
+rule Responder_177_manyto153to154:
+    [ StF(~pid, 'tgk153', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_PKa_0, tgc_PKb_0, tgc_ra_0, tgc_rb_0>)
+    , Fr(~nb_97)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk154', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, ~nb_97, tgc_PKa_0, tgc_PKb_0, tgc_ra_0, tgc_rb_0>)
+    ]
+
+rule Responder_177_manyto154to155:
+    [ StF(~pid, 'tgk154', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Nb_0, tgc_PKa_0, tgc_PKb_0, tgc_ra_0, tgc_rb_0>)
+    , In(ca_98)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk155', <tgc_BTaddrA_0, tgc_BTaddrB_0, ca_98, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Nb_0, tgc_ra_0, tgc_rb_0>)
+    , Out(first_128bit_27(SHA256_18(<tgc_Nb_0, <tgc_PKb_0, tgc_PKa_0, tgc_rb_0>>)))
+    ]
+
+rule Responder_177_manyto155to156:
+    [ StF(~pid, 'tgk155', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_Ca_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Nb_0, tgc_ra_0, tgc_rb_0>)
+    , In(na_99)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk156', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_Ca_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, na_99, tgc_Nb_0, tgc_ra_0, tgc_rb_0>)
+    ]
+
+rule Responder_177_manyto156to157:
+    [ StF(~pid, 'tgk156', <tgc_BTaddrA_0, tgc_BTaddrB_0, first_128bit_27(SHA256_18(<tgc_Na_0, <pka_101, pkb_100, tgc_ra_0>>)), tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_ra_0, tgc_rb_0>)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk157', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_ra_0, tgc_rb_0>)
+    , Out(tgc_Nb_0)
+    , Auth_Stage_1_End_66(tgc_BTaddrB_0)
+    ]
+
+rule Responder_177_manyto157to158:
+    [ StF(~pid, 'tgk157', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_IOcapA_0, tgc_IOcapB_0, tgc_Na_0, tgc_Nb_0, tgc_ra_0, tgc_rb_0>)
+    , Auth_Stage_1_End_66(tgc_BTaddrB_0)
+    , In(first_128bit_27(SHA256_18(<tgc_DHKey_0, <tgc_Na_0, tgc_Nb_0, tgc_rb_0, tgc_IOcapA_0, tgc_BTaddrA_0, tgc_BTaddrB_0>>)))
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk158', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_Na_0, tgc_Nb_0>)
+    , Auth_Stage_2_End_111(tgc_BTaddrB_0)
+    , Out(first_128bit_27(SHA256_18(<tgc_DHKey_0, <tgc_Nb_0, tgc_Na_0, tgc_ra_0, tgc_IOcapB_0, tgc_BTaddrB_0, tgc_BTaddrA_0>>)))
+    ]
+
+rule Responder_177_manyto158to159:
+    [ StF(~pid, 'tgk158', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_DHKey_0, tgc_Na_0, tgc_Nb_0>)
+    , Auth_Stage_2_End_111(tgc_BTaddrB_0)
+    ]
+  --[ 
+    ]->
+    [ StF(~pid, 'tgk159', <tgc_BTaddrA_0, tgc_BTaddrB_0, first_128bit_27(SHA256_18(<tgc_DHKey_0, <tgc_Na_0, tgc_Nb_0, 'btlk', tgc_BTaddrA_0, tgc_BTaddrB_0>>))>)
+    ]
+
+rule Responder_177_manyto159:
+  [StF(~pid, 'tgk159', <tgc_BTaddrA_0, tgc_BTaddrB_0, tgc_LK_0>)]--[LTK_Resp_129(
+tgc_BTaddrA_0, tgc_BTaddrB_0, AES128_19(first_128bit_27(AES128_19('tmp2', tgc_LK_0)), 'brle'))]->[]
+
+rule numeric_comparison_178_160to161:
+  [Fr(~pid)]--[]->[StF(~pid, 'tgk161', 'empty_tuple')]
+
+rule numeric_comparison_178_manyto161to162:
+  [StF(~pid, 'tgk161', 'empty_tuple')]--[]->[StF(~pid, 'tgk162', <$A, $B, 'DisplayYesNo', 'DisplayYesNo'>)]
+
+rule numeric_comparison_178_manyto162tomany:
+    [ StF(~pid, 'tgk162', <tgc_addr_a_0, tgc_addr_b_0, tgc_iocap_a_0, tgc_iocap_b_0>)
+    ]
+  --[ 
+    ]->
+    [ StB(~pid, 'tgk162', <tgc_iocap_a_0, tgc_iocap_b_0>)
+    , IO_Cap_A_33(tgc_addr_a_0, tgc_iocap_a_0)
+    , IO_Cap_B_34(tgc_addr_b_0, tgc_iocap_b_0)
+    ]
+
+rule numeric_comparison_178_162to163tomany:
+  [StB(~pid, 'tgk162', <tgc_iocap_a_0, 'DisplayOnly'>)]--[]->[StB(~pid, 'tgk163', <tgc_iocap_a_0>)]
+
+rule numeric_comparison_178_163to164to183:
+  [StB(~pid, 'tgk163', <'DisplayOnly'>)]--[]->[St(~pid, 'tgk183', <'Just_Works'>)]
+
+rule numeric_comparison_178_163to165to183:
+  [StB(~pid, 'tgk163', <'DisplayYesNo'>)]--[]->[St(~pid, 'tgk183', <'Just_Works_AC'>)]
+
+rule numeric_comparison_178_163to166to183:
+  [StB(~pid, 'tgk163', <'KeyboardOnly'>)]--[]->[St(~pid, 'tgk183', <'Passkey_Entry_AIBD'>)]
+
+rule numeric_comparison_178_163to167to183:
+  [StB(~pid, 'tgk163', <'NoInputNoOutput'>)]--[]->[St(~pid, 'tgk183', <'Just_Works'>)]
+
+rule numeric_comparison_178_162to168tomany:
+  [StB(~pid, 'tgk162', <tgc_iocap_a_0, 'DisplayYesNo'>)]--[]->[StB(~pid, 'tgk168', <tgc_iocap_a_0>)]
+
+rule numeric_comparison_178_168to169to183:
+  [StB(~pid, 'tgk168', <'DisplayOnly'>)]--[]->[St(~pid, 'tgk183', <'Just_Works_BC'>)]
+
+rule numeric_comparison_178_168to170to183:
+  [StB(~pid, 'tgk168', <'DisplayYesNo'>)]--[]->[St(~pid, 'tgk183', <'Numeric_Comparison'>)]
+
+rule numeric_comparison_178_168to171to183:
+  [StB(~pid, 'tgk168', <'KeyboardOnly'>)]--[]->[St(~pid, 'tgk183', <'Passkey_Entry_AIBD'>)]
+
+rule numeric_comparison_178_168to172to183:
+  [StB(~pid, 'tgk168', <'NoInputNoOutput'>)]--[]->[St(~pid, 'tgk183', <'Just_Works_BC'>)]
+
+rule numeric_comparison_178_162to173tomany:
+  [StB(~pid, 'tgk162', <tgc_iocap_a_0, 'KeyboardOnly'>)]--[]->[StB(~pid, 'tgk173', <tgc_iocap_a_0>)]
+
+rule numeric_comparison_178_173to174to183:
+  [StB(~pid, 'tgk173', <'DisplayOnly'>)]--[]->[St(~pid, 'tgk183', <'Passkey_Entry_ADBI'>)]
+
+rule numeric_comparison_178_173to175to183:
+  [StB(~pid, 'tgk173', <'DisplayYesNo'>)]--[]->[St(~pid, 'tgk183', <'Passkey_Entry_ADBI'>)]
+
+rule numeric_comparison_178_173to176to183:
+  [StB(~pid, 'tgk173', <'KeyboardOnly'>)]--[]->[St(~pid, 'tgk183', <'Passkey_Entry_AIBI'>)]
+
+rule numeric_comparison_178_173to177to183:
+  [StB(~pid, 'tgk173', <'NoInputNoOutput'>)]--[]->[St(~pid, 'tgk183', <'Just_Works'>)]
+
+rule numeric_comparison_178_162to178tomany:
+  [StB(~pid, 'tgk162', <tgc_iocap_a_0, 'NoInputNoOutput'>)]--[]->[StB(
+~pid, 'tgk178', <tgc_iocap_a_0>)]
+
+rule numeric_comparison_178_178to179to183:
+  [StB(~pid, 'tgk178', <'DisplayOnly'>)]--[]->[St(~pid, 'tgk183', <'Just_Works'>)]
+
+rule numeric_comparison_178_178to180to183:
+  [StB(~pid, 'tgk178', <'DisplayYesNo'>)]--[]->[St(~pid, 'tgk183', <'Just_Works_AC'>)]
+
+rule numeric_comparison_178_178to181to183:
+  [StB(~pid, 'tgk178', <'KeyboardOnly'>)]--[]->[St(~pid, 'tgk183', <'Just_Works'>)]
+
+rule numeric_comparison_178_178to182to183:
+  [StB(~pid, 'tgk178', <'NoInputNoOutput'>)]--[]->[St(~pid, 'tgk183', <'Just_Works'>)]
+
+rule numeric_comparison_178_183to184tomany:
+  [St(~pid, 'tgk183', <tgc_Stage1_Protocol_0>)]--[User_Ideal_130()]->[StB(
+~pid, 'tgk184', <tgc_Stage1_Protocol_0>)]
+
+rule numeric_comparison_178_184to185to186:
+  [StB(~pid, 'tgk184', <'Numeric_Comparison'>)]--[]->[StF(~pid, 'tgk186', 'empty_tuple')]
+
+rule numeric_comparison_178_184to188to189:
+  [StB(~pid, 'tgk184', <'Just_Works_AC'>)]--[]->[StF(~pid, 'tgk189', 'empty_tuple')]
+
+rule numeric_comparison_178_184to190to191:
+  [StB(~pid, 'tgk184', <'Just_Works_BC'>)]--[]->[StF(~pid, 'tgk191', 'empty_tuple')]
+
+rule numeric_comparison_178_184to192to193:
+  [StB(~pid, 'tgk184', <'Passkey_Entry_AIBI'>)]--[]->[StF(~pid, 'tgk193', 'empty_tuple')]
+
+rule numeric_comparison_178_184to194to195:
+  [StB(~pid, 'tgk184', <'Passkey_Entry_AIBD'>)]--[]->[StF(~pid, 'tgk195', 'empty_tuple')]
+
+rule numeric_comparison_178_184to196to197:
+  [StB(~pid, 'tgk184', <'Passkey_Entry_ADBI'>)]--[]->[StF(~pid, 'tgk197', 'empty_tuple')]
+
+rule numeric_comparison_178_183to198tomany:
+  [St(~pid, 'tgk183', <tgc_Stage1_Protocol_0>)]--[User_Ignorant_131()]->[StB(
+~pid, 'tgk198', 'empty_tuple')]
+
+rule numeric_comparison_178_183to198to200:
+  [St(~pid, 'tgk183', <tgc_Stage1_Protocol_0>)]--[User_Ignorant_131()]->[St(
+~pid, 'tgk200', 'empty_tuple')]
+
+rule numeric_comparison_178_manyto186:
+    [ StF(~pid, 'tgk186', 'empty_tuple')
+    , Va_52(addr_a_137, confirm_val_135)
+    , Vb_53(addr_b_136, confirm_val_135)
+    ]
+  --[ 
+    ]->
+    [ Auth_Stage_1_End_66(addr_a_137)
+    , Auth_Stage_1_End_66(addr_b_136)
+    ]
+
+rule numeric_comparison_178_184to187:
+  [StB(~pid, 'tgk184', <'Just_Works'>)]--[]->[]
+
+rule numeric_comparison_178_manyto189:
+    [ StF(~pid, 'tgk189', 'empty_tuple')
+    , Va_52(addr_a_138, 'Pairing_Confirm')
+    ]
+  --[ JW_User_Confirm_132(addr_a_138)
+    ]->
+    [ Auth_Stage_1_End_66(addr_a_138)
+    ]
+
+rule numeric_comparison_178_manyto191:
+    [ StF(~pid, 'tgk191', 'empty_tuple')
+    , Vb_53(addr_b_139, 'Pairing_Confirm')
+    ]
+  --[ JW_User_Confirm_132(addr_b_139)
+    ]->
+    [ Auth_Stage_1_End_66(addr_b_139)
+    ]
+
+rule numeric_comparison_178_manyto193:
+    [ StF(~pid, 'tgk193', 'empty_tuple')
+    , Fr(~passkey_140)
+    , Passkey_Prompt_Init_62(addr_a_142)
+    , Passkey_Prompt_Resp_64(addr_b_141)
+    ]
+  --[ 
+    ]->
+    [ Enter_Passkey_Init_63(addr_a_142, ~passkey_140)
+    , Enter_Passkey_Resp_65(addr_b_141, ~passkey_140)
+    ]
+
+rule numeric_comparison_178_manyto195:
+    [ StF(~pid, 'tgk195', 'empty_tuple')
+    , Vb_53(addr_b_144, passkey_143)
+    , Passkey_Prompt_Init_62(addr_a_145)
+    ]
+  --[ 
+    ]->
+    [ Enter_Passkey_Init_63(addr_a_145, passkey_143)
+    ]
+
+rule numeric_comparison_178_manyto197:
+    [ StF(~pid, 'tgk197', 'empty_tuple')
+    , Va_52(addr_a_148, passkey_146)
+    , Passkey_Prompt_Resp_64(addr_b_147)
+    ]
+  --[ 
+    ]->
+    [ Enter_Passkey_Resp_65(addr_b_147, passkey_146)
+    ]
+
+rule numeric_comparison_178_198to199:
+    [ StB(~pid, 'tgk198', 'empty_tuple')
+    , Va_52(addr_a_151, confirm_val_149)
+    , Vb_53(addr_b_150, confirm_val_149)
+    ]
+  --[ 
+    ]->
+    [ Auth_Stage_1_End_66(addr_a_151)
+    , Auth_Stage_1_End_66(addr_b_150)
+    ]
+
+rule numeric_comparison_178_198to201:
+    [ StB(~pid, 'tgk198', 'empty_tuple')
+    , Va_52(addr_a_152, 'Pairing_Confirm')
+    ]
+  --[ JW_User_Confirm_132(addr_a_152)
+    ]->
+    [ Auth_Stage_1_End_66(addr_a_152)
+    ]
+
+rule numeric_comparison_178_198to202:
+    [ StB(~pid, 'tgk198', 'empty_tuple')
+    , Vb_53(addr_b_153, 'Pairing_Confirm')
+    ]
+  --[ JW_User_Confirm_132(addr_b_153)
+    ]->
+    [ Auth_Stage_1_End_66(addr_b_153)
+    ]
+
+rule numeric_comparison_178_198to203:
+    [ StB(~pid, 'tgk198', 'empty_tuple')
+    , Fr(~passkey_154)
+    , Passkey_Prompt_Init_62(addr_a_156)
+    , Passkey_Prompt_Resp_64(addr_b_155)
+    ]
+  --[ 
+    ]->
+    [ Enter_Passkey_Init_63(addr_a_156, ~passkey_154)
+    , Enter_Passkey_Resp_65(addr_b_155, ~passkey_154)
+    ]
+
+rule numeric_comparison_178_198to204:
+    [ StB(~pid, 'tgk198', 'empty_tuple')
+    , Vb_53(addr_b_158, passkey_157)
+    , Passkey_Prompt_Init_62(addr_a_159)
+    ]
+  --[ 
+    ]->
+    [ Enter_Passkey_Init_63(addr_a_159, passkey_157)
+    ]
+
+rule numeric_comparison_178_198to205:
+    [ StB(~pid, 'tgk198', 'empty_tuple')
+    , Va_52(addr_a_162, passkey_160)
+    , Passkey_Prompt_Resp_64(addr_b_161)
+    ]
+  --[ 
+    ]->
+    [ Enter_Passkey_Resp_65(addr_b_161, passkey_160)
+    ]
+
+restriction tg_cell_neq_restriction:
+  "not Ex x_188 #i_187 .
+         TgCellNeq(x_188, x_188) @ #i_187"
+
+lemma Confidentiality []:
+  all-traces
+  "All A_179 B_180 ltk1_181 ltk2_182 #i_183 #j_184 .
+     ((((LTK_Init_128(A_179, B_180, ltk1_181) @ #i_183) & (LTK_Resp_129(
+     A_179, B_180, ltk2_182) @ #j_184))) ==> (((((ltk1_181) = (ltk2_182))) & (not 
+     Ex #z_185 .
+       K(ltk1_181) @ #z_185))))"
+
+end
+

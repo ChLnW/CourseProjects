@@ -1,0 +1,242 @@
+fun True() = "True"
+fun False() = "False"
+
+fun tbi() = "TO_BE_INITIALIZED" // placeholder value to initialize a cell
+
+fun Pairing_Request(IdKey, MitM, IOcap) = <"Pairing_Request", IdKey, MitM, IOcap>
+fun Pairing_Response(IdKey, MitM, IOcap) = <"Pairing_Response", IdKey, MitM, IOcap>
+
+fun DisplayOnly() = "DisplayOnly"
+fun DisplayYesNo() = "DisplayYesNo"
+fun KeyboardOnly() = "KeyboardOnly"
+fun NoInputNoOutput() = "NoInputNoOutput"
+
+fun Just_Works() = "Just_Works"
+fun Just_Works_AC() = "Just_Works_AC"
+fun Just_Works_BC() = "Just_Works_BC"
+fun Numeric_Comparison() = "Numeric_Comparison"
+fun Passkey_Entry_ADBI() = "Passkey_Entry_ADBI" // A Display B Input
+fun Passkey_Entry_AIBD() = "Passkey_Entry_AIBD" // A Input   B Display
+fun Passkey_Entry_AIBI() = "Passkey_Entry_AIBI" // A Input   B Input
+
+process determine_stage_1_protocol (
+   'iocap_a,
+   'iocap_b,
+   rw 'protocol
+) =
+   choice {
+      { // row 1
+         [ 'iocap_b cas DisplayOnly() ] --> [];
+
+         choice {
+            { // col1
+               [ 'iocap_a cas DisplayOnly() ]
+                  -->
+                  [ 'protocol := Just_Works() ]
+            };
+            { // col2
+               [ 'iocap_a cas DisplayYesNo() ]
+                  -->
+                  [ 'protocol := Just_Works_AC() ]
+            };
+            { // col3
+               [ 'iocap_a cas KeyboardOnly() ]
+                  -->
+                  [ 'protocol := Passkey_Entry_AIBD() ]
+            };
+            { // col4
+               [ 'iocap_a cas NoInputNoOutput() ]
+                  -->
+                  [ 'protocol := Just_Works() ]
+            };
+         }
+      };
+      { // row 2
+         [ 'iocap_b cas DisplayYesNo() ] --> [];
+
+         choice {
+            { // col1
+               [ 'iocap_a cas DisplayOnly() ]
+                  -->
+                  [ 'protocol := Just_Works_BC() ]
+            };
+            { // col2
+               [ 'iocap_a cas DisplayYesNo() ]
+                  -->
+                  [ 'protocol := Numeric_Comparison() ]
+            };
+            { // col3
+               [ 'iocap_a cas KeyboardOnly() ]
+                  -->
+                  [ 'protocol := Passkey_Entry_AIBD() ]
+            };
+            { // col4
+               [ 'iocap_a cas NoInputNoOutput() ]
+                  -->
+                  [ 'protocol := Just_Works_BC() ]
+            };
+         }
+      };
+      { // row 3
+         [ 'iocap_b cas KeyboardOnly() ] --> [];
+
+         choice {
+            { // col1
+               [ 'iocap_a cas DisplayOnly() ]
+                  -->
+                  [ 'protocol := Passkey_Entry_ADBI() ]
+            };
+            { // col2
+               [ 'iocap_a cas DisplayYesNo() ]
+                  -->
+                  [ 'protocol := Passkey_Entry_ADBI() ]
+            };
+            { // col3
+               [ 'iocap_a cas KeyboardOnly() ]
+                  -->
+                  [ 'protocol := Passkey_Entry_AIBI() ]
+            };
+            { // col4
+               [ 'iocap_a cas NoInputNoOutput() ]
+                  -->
+                  [ 'protocol := Just_Works() ]
+            };
+         }
+      };
+      { // row 4
+         [ 'iocap_b cas NoInputNoOutput() ] --> [];
+
+         choice {
+            { // col1
+               [ 'iocap_a cas DisplayOnly() ]
+                  -->
+                  [ 'protocol := Just_Works() ]
+            };
+            { // col2
+               [ 'iocap_a cas DisplayYesNo() ]
+                  -->
+                  [ 'protocol := Just_Works_AC() ]
+            };
+            { // col3
+               [ 'iocap_a cas KeyboardOnly() ]
+                  -->
+                  [ 'protocol := Just_Works() ]
+            };
+            { // col4
+               [ 'iocap_a cas NoInputNoOutput() ]
+                  -->
+                  [ 'protocol := Just_Works() ]
+            };
+         }
+      };
+   }
+
+apred User_Confirmation/1
+// apred Distribute_IdKey/4
+apred Distribute_IdKey/1
+
+apred Careful_Implementation/1
+apred Careless_Implementation/1
+
+// apred Response_Received/0
+
+process Initiator (
+   pid,
+   'irk_a_req,
+   'mitm_a,
+   'iocap_a,
+   rw 'irk_a_rsp,
+   rw 'mitm_b,
+   rw 'iocap_b,
+   rw 'protocol
+) = 
+   [] --> [ Out(Pairing_Request('irk_a_req, 'mitm_a, 'iocap_a)) ];
+   [ In(<"Pairing_Response", idkey, mitm, iocap>) ]
+      -->
+      [ 'irk_a_rsp := idkey, 'mitm_b := mitm, 'iocap_b := iocap ];
+
+   choice {
+      {
+         // Vol3 PartC 5.2.2.6: Just Works with auto confirmation, when neither device requires MITM protection
+         [ 'mitm_a cas False(), 'mitm_b cas False() ] 
+            -->
+            [ 'protocol := Just_Works() ]
+      };
+      {
+         [ 'mitm_a cas True() ] --> [];
+
+         determine_stage_1_protocol('iocap_a, 'iocap_b, 'protocol)
+      };
+      {
+         [ 'mitm_b cas True() ] --> [];
+         
+         determine_stage_1_protocol('iocap_a, 'iocap_b, 'protocol)
+      }
+   };
+
+   if not ( 'protocol cas Just_Works() ) then {
+      if not ( 'protocol cas Just_Works_BC() ) then {
+         [] --[ User_Confirmation(pid) ]-> []
+      }
+   };
+
+   choice {
+      {
+         [] --[ Careful_Implementation(pid) ]-> [];
+
+         [ 'irk_a_req cas True(), 'irk_a_rsp cas True() ]
+            --[ Distribute_IdKey(pid) ]-> []
+      };
+      {
+         [] --[ Careless_Implementation(pid) ]-> [];
+
+         [ 'irk_a_rsp cas True() ]
+            --[ Distribute_IdKey(pid) ]-> []
+      }
+   }
+
+
+lemma IRKTheftProofCareless = 
+   // All pid irk mitm iocap #i #k. 
+   //    (Distribute_IdKey(pid, irk, mitm, iocap) @ #i 
+   All pid #i #k. 
+      (Distribute_IdKey(pid) @ #i 
+      & Careless_Implementation(pid) @ #k
+      )
+        ==>
+        (Ex #j. User_Confirmation(pid) @ #j
+                & j < i)
+
+lemma IRKTheftProofCareful = 
+   // All pid irk mitm iocap #i #k. 
+   //    (Distribute_IdKey(pid, irk, mitm, iocap) @ #i 
+   All pid #i #k. 
+      (Distribute_IdKey(pid) @ #i 
+      & Careful_Implementation(pid) @ #k
+      )
+        ==>
+        (Ex #j. User_Confirmation(pid) @ #j
+                & j < i)
+
+restriction either_careless_or_careful =
+   (All pid #i.
+      (Careful_Implementation(pid) @ #i) ==>
+      (not (Ex #j. Careless_Implementation(pid) @ j)))
+   &
+   (All pid #i.
+      (Careless_Implementation(pid) @ #i) ==>
+      (not (Ex #j. Careful_Implementation(pid) @ j)))
+
+// lemma SanityCheck = 
+//    exists-trace
+//    // Ex #i. Response_Received() @ #i
+//    // Ex pid irk mitm iocap #i. Distribute_IdKey(pid, irk, mitm, iocap) @ #i
+//    Ex pid #i. Distribute_IdKey(pid) @ #i
+
+
+// process DisplayYesNo_Mitm_NoIrk = 
+//    [ Fr(~id) ] 
+//       --> 
+//       [ 'idkey := False(), 'mitm := True(), 'iocap := DisplayYesNo(), 'process_id := ~id,
+//         'irk_a_rsp := tbi(), 'mitm_b := tbi(), 'iocap_b := tbi(), 'protocol := tbi() ];
+//    Initiator('process_id, 'idkey, 'mitm, 'iocap, 'irk_a_rsp, 'mitm_b, 'iocap_b, 'protocol)
