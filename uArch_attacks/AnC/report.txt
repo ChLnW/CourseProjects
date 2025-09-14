@@ -1,0 +1,89 @@
+GROUP_NAME=quench-quokka
+STUDENT_IDS=21-913-512, 24-934-564
+----------------------------------
+
+How does evict_tlb avoid evicting a from the cache?
+
+Our evict_tlb evicts a from the cache and tlb but then brings it back after evicting.
+
+./figures/pml1.pdf
+--------------------
+
+// Explain what the heatmap shows.
+
+Heatmap shows what cache lines have been accessed during the page walk, by accessing pages at the 8 * 4kb offset we can see the cache line moving, therefore observing this is the location of PML1 
+
+./figures/pml234.pdf
+--------------------
+
+// Explain what the heatmap shows
+
+
+Grade script output
+--------------------
+[i] Grading on host: ee-tik-cn001
+[i] === ANC
+[i] Round 01 -----------------------
+[i] Expected:         0x4a067c427000
+[i] Actual:           0x00067c427000
+[*] Time:             17.98 s
+[i] Round 02 -----------------------
+[i] Expected:         0x2cffb7c28000
+[i] Actual:           0x007eb7c28000
+[*] Time:             17.89 s
+[i] Round 03 -----------------------
+[i] Expected:         0x2fc27321f000
+[i] Actual:           0x00427321f000
+[*] Time:             18.02 s
+[i] Round 04 -----------------------
+[i] Expected:         0x43a30cde4000
+[i] Actual:           0x00220cde4000
+[*] Time:             17.92 s
+[i] Round 05 -----------------------
+[i] Expected:         0x567f1ce7f000
+[i] Actual:           0x007e1ce7f000
+[*] Time:             18.06 s
+[i] Round 06 -----------------------
+[i] Expected:         0x636c2c0d2000
+[i] Actual:           0x006c2c0d2000
+[*] Time:             17.99 s
+[i] Round 07 -----------------------
+[i] Expected:         0x0b2b78879000
+[i] Actual:           0x002a78879000
+[*] Time:             18.06 s
+[i] Round 08 -----------------------
+[i] Expected:         0x0f8decb42000
+[i] Actual:           0x000cecb42000
+[*] Time:             18.04 s
+[i] Round 09 -----------------------
+[i] Expected:         0x74842360e000
+[i] Actual:           0x00002360e000
+[*] Time:             17.83 s
+[i] Round 10 -----------------------
+[i] Expected:         0x6e1b92d1d000
+[i] Actual:           0x001a92d1d000
+[*] Time:             18.01 s
+[!] Full recovery:    0/10
+[*] Partial recovery: 10/10
+[*] Pass
+[i] === check test__evict_tlb
+[*] Output is OK
+[*] Pass
+[i] === check test__evict_cache
+[*] Output is OK
+[*] Pass
+
+Work distribution
+--------------------
+
+### 21-913-512
+part of evict_cache / test__evict_cache
+part of anc
+plot.py
+slides
+
+### 24-934-564
+part of evict_cache / test__evict_cache
+part of anc
+test__evict_tlb
+sliding window staircase idenfication

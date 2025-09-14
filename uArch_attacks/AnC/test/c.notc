@@ -1,0 +1,259 @@
+#include <ctype.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include <sys/mman.h> // madvise
+#include <errno.h>
+
+unsigned long probe(void *adrs);
+void l2Flush(char *pages, void *target, int bufferSize, int intervalSize);
+void evict_tlb();
+
+#define THRESHOLD2 60
+
+// i7-8700K STLB: 1.5 Ki entries * 4 kiB/page = 6 MiB memory minimum, use 16 MiB for safety
+
+// #define EVICT_SIZE (1<<24)
+
+#define PAGE_SIZE (1<<12)
+#define HUGEPAGE_SIZE (1<<21)
+#define EVICT_SIZE (4*1536*PAGE_SIZE)
+
+static unsigned char out[8];
+static unsigned char in[8];
+
+int main(void) {
+    uint64_t *p;
+    if (posix_memalign((void**) &p, PAGE_SIZE, PAGE_SIZE)) {
+        printf("allocation failed\n");
+        return 0;
+    }
+    printf("buffer head: %p\n", p);
+
+    char *pages;
+    // int pagesSize = HUGEPAGE_SIZE * 8;
+    // if (posix_memalign((void**) &pages, HUGEPAGE_SIZE, pagesSize)) {
+
+    // For l2 eviction, 2 * l2_size used.
+    int pagesSize = PAGE_SIZE*1024*2;
+    if (posix_memalign((void**) &pages, PAGE_SIZE, pagesSize)) {
+        printf("allocation failed\n");
+        return 0;
+    }
+    printf("hugepage head: %p\n", pages);
+
+    unsigned long time1 = 0;
+    unsigned long sum1 = 0, max1 = 0;
+
+    unsigned long time2 = 0;
+    unsigned long sum2 = 0, max2 = 0;
+
+    const int round = 10;
+
+    uint64_t *adr;
+    for (int k=0; k<round; ++k) {
+        adr = &p[(11+19*k)%128];
+                // asm __volatile__(
+        //     "lfence              \n\t"
+        //     :::);
+        probe(adr);         // bring to l1 cache and tlb
+        time1 = probe(adr); // l1 cache hit & tlb hit
+        evict_tlb();
+        time2 = probe(adr); //l1 cache hit but tlb miss
+        
+        sum1 += time1;
+        if (time1 > max1)
+            max1 = time1;
+
+        sum2 += time2;
+        if (time2 > max2)
+            max2 = time2;
+
+        printf("%ld -> %ld\n", time1, time2);
+    }
+    // sum1 /= round;
+    // sum2 /= round;
+    printf("\nMAX: %ld -> %ld\n", max1, max2);
+    printf("AVG: %ld -> %ld\n", sum1/round, sum2/round);
+    printf("AVG2: %ld -> %ld\n", (sum1-max1)/(round-1), (sum2-max2)/(round-1));
+
+    printf("\n\n");
+
+    sum1 = 0;
+    sum2 = 0;
+    max1 = 0;
+    max2 = 0;
+    for (int k=0; k<round; ++k) {
+        adr = &p[(11+19*k)%256];
+                // asm __volatile__(
+        //     "lfence              \n\t"
+        //     :::);
+        probe(adr);         // bring to l1 cache and tlb
+        time1 = probe(adr); // l1 cache hit & tlb hit
+        // l2Flush(pages, adr, pagesSize, 1<<17);
+        l2Flush(pages, adr, pagesSize, PAGE_SIZE);
+        // asm __volatile__(
+        //     "clflush 0(%0)       \n\t" // flush accessed cash line
+        //     :
+        //     : "r" (adr)
+        //     :);
+        time2 = probe(adr); //l1 cache hit but tlb miss
+        
+        sum1 += time1;
+        if (time1 > max1)
+            max1 = time1;
+
+        sum2 += time2;
+        if (time2 > max2)
+            max2 = time2;
+
+        printf("%ld -> %ld\n", time1, time2);
+    }
+    // sum1 /= round;
+    // sum2 /= round;
+    printf("\nMAX: %ld -> %ld\n", max1, max2);
+    printf("AVG: %ld -> %ld\n", sum1/round, sum2/round);
+    printf("AVG2: %ld -> %ld\n", (sum1-max1)/(round-1), (sum2-max2)/(round-1));
+
+    free(pages);
+    return 0;
+}
+
+/*
+    Modified from https://www.usenix.org/system/files/conference/usenixsecurity14/sec14-paper-yarom.pdf
+*/
+unsigned long probe(void *adrs) {
+    volatile unsigned long low1, low2, high1, high2, time;
+
+    asm __volatile__(
+        "mfence              \n\t"
+        "lfence              \n\t"
+        "rdtsc               \n\t" // read pre-access time
+        "mov %%rax, %0       \n\t" // store time lower bits
+        "mov %%rdx, %1       \n\t" // store time higher bits
+        "lfence              \n\t"
+        "mov (%4), %%rax     \n\t" // memory access
+        "lfence              \n\t" // wait for memory access
+        "rdtsc               \n\t" // read post-access time
+        "mov %%rax, %2       \n\t" // store time lower bits
+        "mov %%rdx, %3       \n\t" // store time higher bits
+        : "=r" (low1), "=r" (high1), "=r" (low2), "=r" (high2) 
+        : "c" (adrs) // ecx for adrs
+        : "%rax", "%rbx", "%rdx");
+        
+    time = ((high2 << 32) ^ low2) - ((high1 << 32) ^ low1);
+    return time;
+}
+
+void l2Flush(char *pages, void *target, int bufferSize, int intervalSize) {
+    int mask = intervalSize - 1;
+    int offset = (uint64_t) target & mask;
+    char *adrs;
+    // printf("offset: %x\n", offset);
+    // for (int i=0; i<16*8; ++i){
+    //     adrs = &pages[(i*intervalSize)+offset];
+    for (int i=0; i<bufferSize; i+=intervalSize){
+        adrs = &pages[(i)+offset];
+        *adrs = (i/intervalSize)%256;
+        asm __volatile__(
+            "mov (%0), %%rax    \n\t" 
+            :
+            : "c" (adrs) 
+            : "%rax");
+    }
+    // for (int i=16*8-1; i>=0; --i){
+    //     adrs = &pages[(i*intervalSize)+offset];
+    for (int i=bufferSize-intervalSize; i>=bufferSize; i-=intervalSize){
+        adrs = &pages[(i)+offset];
+        asm __volatile__(
+            "mov (%0), %%rax    \n\t" // memory access
+            :
+            : "c" (adrs)
+            : "%rax"); 
+    }
+    // for (int i=0; i<16*8; ++i){
+    //     adrs = &pages[(i*intervalSize)+offset];
+    for (int i=0; i<bufferSize; i+=intervalSize){
+        adrs = &pages[(i)+offset];
+        asm __volatile__(
+            "mov (%0), %%rax    \n\t" // memory access
+            :
+            : "c" (adrs) 
+            : "%rax");
+    }
+} 
+
+// void l2Flush(char *pages, void *target, int bufferSize, int intervalSize) {
+//     int mask = intervalSize - 1;
+//     int offset = (uint64_t) target & mask;
+//     char *adrs;
+//     // for (int i=0; i<16*8; ++i){
+//     //     adrs = &pages[(i*intervalSize)+offset];
+
+//   for (int i = 0; i < bufferSize/PAGE_SIZE; ++i) {
+//     adrs = &pages[(i * PAGE_SIZE) + offset];
+//     *adrs = i%256;
+//     *(volatile unsigned char *)adrs;
+//   }
+
+//   for (int i = bufferSize/PAGE_SIZE - 1; i >= 0; --i) {
+//     adrs = &pages[(i * PAGE_SIZE) + offset];
+//     *(volatile unsigned char *)adrs;
+//   }
+
+//   for (int i = 0; i < bufferSize/PAGE_SIZE; ++i) {
+//     adrs = &pages[(i * PAGE_SIZE) + offset];
+//     *(volatile unsigned char *)adrs;
+//   }
+// }
+
+void evict_tlb(){
+    // declare memory
+    // walk through head of pages (maybe 3 times?)
+
+    char *pages;
+    if (posix_memalign((void**) &pages, PAGE_SIZE, EVICT_SIZE)) {
+        printf("allocation failed\n");
+        return;
+    }
+    // printf("pages head: %p\n", pages);
+    // Ensures that memory will not be backed by transparent hugepages.
+    // if (madvise(pages, (1<<21)*8, MADV_NOHUGEPAGE)) {
+    //     int errsv = errno;
+    //     printf("madvise for NOhugepage failed with errno %d\n", errsv);
+    // }
+
+    char *adrs;
+    for (int64_t i=0; i<EVICT_SIZE; i+=PAGE_SIZE) {
+        // printf("%ld\n", i);
+        adrs = &pages[i];
+        *adrs = (i/PAGE_SIZE)%256; // Is writing required?
+        asm __volatile__(
+            "mov (%0), %%rax    \n\t" // memory access
+            :
+            : "c" (adrs) 
+            : "%rax");
+    }
+    // printf("it1 done\n");
+    for (int64_t i=(EVICT_SIZE-PAGE_SIZE); i>=0; i-=PAGE_SIZE) {
+        // printf("%ld\n", i);
+        adrs = &pages[i];
+        asm __volatile__(
+            "mov (%0), %%rax    \n\t" // memory read
+            :
+            : "c" (adrs) 
+            : "%rax");
+    }
+    // printf("it2 done\n");
+    for (int64_t i=0; i<EVICT_SIZE; i+=PAGE_SIZE) {
+        adrs = &pages[i];
+        asm __volatile__(
+            "mov (%0), %%rax    \n\t" // memory read
+            :
+            : "c" (adrs) 
+            : "%rax");
+    }
+    free(pages);
+}

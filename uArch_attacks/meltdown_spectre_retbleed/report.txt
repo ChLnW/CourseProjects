@@ -1,0 +1,71 @@
+GROUP_NAME=quench-quokka
+STUDENT_IDS=21-913-512, 24-934-564
+----------------------------------
+
+Briefly explain what you stuggled with and how you overcame it.
+
+Retbleed: Thought RSB-based prediction would fall back to BTB-based 
+in case of RSB "overflow" (because of the lecture slides), re-went 
+thorugh the Retbleed paper and found it's actually in the case of 
+RSB "underflow".
+
+Expected results
+------------------
+
+****** TESTING meltdown_segv ****************
+[+] Generated secret: b968780e64ce7b0a6fe056260ff3e8a4
+[-] Test result: ..........
+[-] Task:    meltdown_segv
+[-] Rounds:             10
+[+] Accuracy:         100%
+[+] Time (min/med/max): 0.89s/0.89s/0.91s
+
+
+****** TESTING meltdown_tsx ****************
+[+] Generated secret: 5e76de2a2e34327133a3e322dd1ea531
+[-] Test result: ..........
+[-] Task:     meltdown_tsx
+[-] Rounds:             10
+[+] Accuracy:         100%
+[+] Time (min/med/max): 0.86s/0.86s/0.89s
+
+****** TESTING meltdown_spectre ****************
+[+] Generated secret: b29055d6f936d8c1039e8104d7bfcccb
+[-] b2 0&S 6 H36d8c10<9y8104d7bfcc   (22/32)
+[-] b29055d f93 d8c10 9e8104d7bfcccb (29/32)
+[-] b29055 _ 9F d8c1039E8104d7bfcccb (26/32)
+[-] b29055d6f936d&&1039e8104d7bfcccb (30/32)
+[-] b29055d6f936d8c1039e8104d7bfcccb (32/32)
+[-] b290  w6 936d c10 9e8  4d7bfcccb (24/32)
+[-] b29055d6f 36d8c1039e810Kd bfcccb (29/32)
+[-] b29055d6f93? 8?1039e8104d7bfcccb (29/32)
+[-] b29055d6f 36d8c1039e8104d7bfcccb (31/32)
+[-] b29055d6f936d8c1039e 104d7b cccb (30/32)
+[-] Task: meltdown_spectre
+[-] Rounds:             10
+[!] Accuracy:          88%
+[!] Time (min/med/max): 2.27s/2.27s/2.44s
+
+Running test 1...
+Running test 2...
+Running test 3...
+Running test 4...
+Running test 5...
+Running test 6...
+Running test 7...
+Running test 8...
+Running test 9...
+Running test 10...
+Running test 11...
+Running test 12...
+Verifying the submission...
+You passed the primary submission test! (We may still run additional tests.)
+
+Work distrubtion
+------------------
+
+### 21-913-512
+task 1 2 + part of 3
+
+### 24-934-564
+retbleed + part of 3
