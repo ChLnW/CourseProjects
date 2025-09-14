@@ -1,0 +1,222 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-D_GNU_SOURCE",
+      "-Wall",
+      "-Wextra",
+      "-Wpedantic",
+      "-I./include",
+      "-g3",
+      "-O2",
+      "-march=skylake",
+      "-pipe",
+      "-DDEFAULT_DRAM_INFO=DRAM__rohan",
+      "-c",
+      "-o",
+      "src/test__drama.o",
+      "src/test__drama.cpp"
+    ],
+    "directory": "/home/lmg/.sshfs/comsec/HWSec/assignment-4",
+    "file": "/home/lmg/.sshfs/comsec/HWSec/assignment-4/src/test__drama.cpp",
+    "output": "/home/lmg/.sshfs/comsec/HWSec/assignment-4/src/test__drama.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-D_GNU_SOURCE",
+      "-Wall",
+      "-Wextra",
+      "-Wpedantic",
+      "-I./include",
+      "-g3",
+      "-O2",
+      "-march=skylake",
+      "-pipe",
+      "-DDEFAULT_DRAM_INFO=DRAM__rohan",
+      "-c",
+      "-o",
+      "src/blacksmith.o",
+      "src/blacksmith.cpp"
+    ],
+    "directory": "/home/lmg/.sshfs/comsec/HWSec/assignment-4",
+    "file": "/home/lmg/.sshfs/comsec/HWSec/assignment-4/src/blacksmith.cpp",
+    "output": "/home/lmg/.sshfs/comsec/HWSec/assignment-4/src/blacksmith.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-D_GNU_SOURCE",
+      "-Wall",
+      "-Wextra",
+      "-Wpedantic",
+      "-I./include",
+      "-g3",
+      "-O2",
+      "-march=skylake",
+      "-pipe",
+      "-DDEFAULT_DRAM_INFO=DRAM__rohan",
+      "-c",
+      "-o",
+      "src/bs_pattern.o",
+      "src/bs_pattern.cpp"
+    ],
+    "directory": "/home/lmg/.sshfs/comsec/HWSec/assignment-4",
+    "file": "/home/lmg/.sshfs/comsec/HWSec/assignment-4/src/bs_pattern.cpp",
+    "output": "/home/lmg/.sshfs/comsec/HWSec/assignment-4/src/bs_pattern.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-D_GNU_SOURCE",
+      "-Wall",
+      "-Wextra",
+      "-Wpedantic",
+      "-I./include",
+      "-g3",
+      "-O2",
+      "-march=skylake",
+      "-pipe",
+      "-DDEFAULT_DRAM_INFO=DRAM__rohan",
+      "-c",
+      "-o",
+      "src/massage.o",
+      "src/massage.cpp"
+    ],
+    "directory": "/home/lmg/.sshfs/comsec/HWSec/assignment-4",
+    "file": "/home/lmg/.sshfs/comsec/HWSec/assignment-4/src/massage.cpp",
+    "output": "/home/lmg/.sshfs/comsec/HWSec/assignment-4/src/massage.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-D_GNU_SOURCE",
+      "-Wall",
+      "-Wextra",
+      "-Wpedantic",
+      "-I./include",
+      "-g3",
+      "-O2",
+      "-march=skylake",
+      "-pipe",
+      "-DDEFAULT_DRAM_INFO=DRAM__rohan",
+      "-c",
+      "-o",
+      "src/evict.o",
+      "src/evict.cpp"
+    ],
+    "directory": "/home/lmg/.sshfs/comsec/HWSec/assignment-4",
+    "file": "/home/lmg/.sshfs/comsec/HWSec/assignment-4/src/evict.cpp",
+    "output": "/home/lmg/.sshfs/comsec/HWSec/assignment-4/src/evict.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-D_GNU_SOURCE",
+      "-Wall",
+      "-Wextra",
+      "-Wpedantic",
+      "-I./include",
+      "-g3",
+      "-O2",
+      "-march=skylake",
+      "-pipe",
+      "-DDEFAULT_DRAM_INFO=DRAM__rohan",
+      "-c",
+      "-o",
+      "src/memory.o",
+      "src/memory.cpp"
+    ],
+    "directory": "/home/lmg/.sshfs/comsec/HWSec/assignment-4",
+    "file": "/home/lmg/.sshfs/comsec/HWSec/assignment-4/src/memory.cpp",
+    "output": "/home/lmg/.sshfs/comsec/HWSec/assignment-4/src/memory.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-D_GNU_SOURCE",
+      "-Wall",
+      "-Wextra",
+      "-Wpedantic",
+      "-I./include",
+      "-g3",
+      "-O2",
+      "-march=skylake",
+      "-pipe",
+      "-DDEFAULT_DRAM_INFO=DRAM__rohan",
+      "-c",
+      "-o",
+      "src/escalate_privileges.o",
+      "src/escalate_privileges.cpp"
+    ],
+    "directory": "/home/lmg/.sshfs/comsec/HWSec/assignment-4",
+    "file": "/home/lmg/.sshfs/comsec/HWSec/assignment-4/src/escalate_privileges.cpp",
+    "output": "/home/lmg/.sshfs/comsec/HWSec/assignment-4/src/escalate_privileges.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-D_GNU_SOURCE",
+      "-Wall",
+      "-Wextra",
+      "-Wpedantic",
+      "-I./include",
+      "-g3",
+      "-O2",
+      "-march=skylake",
+      "-pipe",
+      "-DDEFAULT_DRAM_INFO=DRAM__rohan",
+      "-c",
+      "-o",
+      "src/drama.o",
+      "src/drama.cpp"
+    ],
+    "directory": "/home/lmg/.sshfs/comsec/HWSec/assignment-4",
+    "file": "/home/lmg/.sshfs/comsec/HWSec/assignment-4/src/drama.cpp",
+    "output": "/home/lmg/.sshfs/comsec/HWSec/assignment-4/src/drama.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-D_GNU_SOURCE",
+      "-Wall",
+      "-Wextra",
+      "-Wpedantic",
+      "-I./include",
+      "-g3",
+      "-O2",
+      "-march=skylake",
+      "-pipe",
+      "-DDEFAULT_DRAM_INFO=DRAM__rohan",
+      "-c",
+      "-o",
+      "src/test__dram-fns.o",
+      "src/test__dram-fns.cpp"
+    ],
+    "directory": "/home/lmg/.sshfs/comsec/HWSec/assignment-4",
+    "file": "/home/lmg/.sshfs/comsec/HWSec/assignment-4/src/test__dram-fns.cpp",
+    "output": "/home/lmg/.sshfs/comsec/HWSec/assignment-4/src/test__dram-fns.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-D_GNU_SOURCE",
+      "-Wall",
+      "-Wextra",
+      "-Wpedantic",
+      "-I./include",
+      "-g3",
+      "-O2",
+      "-march=skylake",
+      "-pipe",
+      "-DDEFAULT_DRAM_INFO=DRAM__rohan",
+      "-c",
+      "-o",
+      "src/test__blacksmith.o",
+      "src/test__blacksmith.cpp"
+    ],
+    "directory": "/home/lmg/.sshfs/comsec/HWSec/assignment-4",
+    "file": "/home/lmg/.sshfs/comsec/HWSec/assignment-4/src/test__blacksmith.cpp",
+    "output": "/home/lmg/.sshfs/comsec/HWSec/assignment-4/src/test__blacksmith.o"
+  }
+]

@@ -1,0 +1,50 @@
+GROUP_NAME=quench-quokka
+STUDENT_IDS=21-913-512, 24-934-564
+------------------------------------------------
+
+########  ASSIGNMENT 4
+
+Briefly explain what you stuggled with and how you overcame it.
+
+
+hostname,     threshold, nbanks, dram_addr_mask, row_mask,           bank_functions
+ee-tik-cn010,       414,     16, 0x0000000fe040,  0x3ffe0000,       0x2040, 0x24000, 0x48000, 0x90000
+ee-tik-cn015,       423,     32, 0x0000003fe040,  0x3ffc0000,       0x2040, 0x44000, 0x88000, 0x110000, 0x220000
+ee-tik-cn017,       349,     16, 0x0000000fe040,  0x3ffe0000,       0x2040, 0x24000, 0x48000, 0x90000
+
+data/
+-----------------------------------
+
+ * Description of data, if at all needed.
+<hostname>__drama.csv raw data of access times for random addresses used to generate histograms
+thresholds.csv thresholds identified by python script from histograms
+dram_banks.csv number of banks identified on each hostname
+patterns.csv 100 generated patterns (result of task6 pasted into csv format)
+
+figures/
+-----------------------------------
+
+ * Description of the histogram
+<hostname>__drama.pdf shows the accesses mapped for specific hostname, all accessess but also 
+filtered with peaks identified and bank conflict threshold 
+
+EVALUATION SUMMARY
+----------------------------------
+
+SWEEP SUMMARY
+----------------------------------
+
+Work distribution
+------------------
+
+### 21-913-512 
+
+task 1 2 
+attempted task 7 
+
+
+### 24-934-564
+
+task 3 4 5 6, improved stability of results of task 1 & 2, debugged task 7
+
+########  ASSIGNMENT 5

@@ -1,0 +1,11 @@
+CLEAN
+CC src/test__blacksmith.o
+CC src/blacksmith.o
+CC src/bs_pattern.o
+CC src/massage.o
+CC src/evict.o
+CC src/memory.o
+CC src/escalate_privileges.o
+CC src/drama.o
+LD test__blacksmith
+/var/spool/slurmd/job339459/slurm_script: line 13: 1327850 Segmentation fault      ./test__blacksmith -e
